@@ -30,7 +30,7 @@ void insertWord(TrieNode *root, const char *word){
     int len = strlen(word);
 
     for (int i = 0; i < len; i++){
-        int index = tolower(word[i]) - 'a';
+        int index = word[i] - 'A';
         if (current->children[index] == NULL){
             current->children[index] = createTrieNode(word[i]);
         }

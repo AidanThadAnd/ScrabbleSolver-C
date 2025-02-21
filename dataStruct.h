@@ -7,7 +7,7 @@
 typedef struct TrieNode {
     char letter;             // The character stored in the node.
     int isWord;             // Flag indicating if a complete word ends at this node.
-    struct TrieNode *children[26]; // Array of pointers to child nodes (one for each letter a-z).
+    struct TrieNode *children[26]; // Array of pointers to child nodes (one for each letter A-Z).
 } TrieNode;
 
 // Board Square Structure

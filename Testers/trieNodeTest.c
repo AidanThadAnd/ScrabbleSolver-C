@@ -32,12 +32,17 @@ void insertWord(TrieNode *root, const char *word){
     int len = strlen(word);
 
     for (int i = 0; i < len; i++){ 
-        int index = tolower(word[i]) - 'a';
+
+        int index = word[i]- 'A';
+
         if (current->children[index] == NULL){ 
+
             current->children[index] = createTrieNode(word[i]); 
+
         }
         current = current->children[index];
     }
+
     current->isWord = 1;
 
 }
@@ -55,10 +60,11 @@ void freeTrie(TrieNode *node){
 }
 
 int searchWord(TrieNode *root, const char *word) {
+
     TrieNode *current = root;
 
     while (*word) {  // Iterate through the word character by character
-        int index = tolower(*word) - 'a';
+        int index = *word - 'A';
         if (index < 0 || index >= 26 || !current->children[index]) {
             return 0; // Word not found
         }
@@ -73,9 +79,9 @@ int searchWord(TrieNode *root, const char *word) {
 void testTrie() {
     TrieNode *root = createTrieNode('\0');
 
-    // Test words
-    const char *words[] = {"apple", "banana", "grape", "orange", "peach", "pear"};
-    const char *testWords[] = {"apple", "mango", "peach", "grapes", "banana"};
+    // Test words 
+    const char *words[] = {"APPLE", "BANANA", "GRAPE", "ORANGE", "PEACH", "PEAR"};
+    const char *testWords[] = {"APPLE", "MANGO", "PEACH", "GRAPES", "BANANA"};
 
     // Insert words into Trie
     for (int i = 0; i < sizeof(words) / sizeof(words[0]); i++) {
