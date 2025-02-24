@@ -1,6 +1,4 @@
-
 #include "dataStruct.h"
-
 
 TrieNode *createTrieNode(char letter){
 

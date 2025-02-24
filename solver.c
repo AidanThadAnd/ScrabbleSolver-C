@@ -15,6 +15,10 @@ void dfs(TrieNode *node, char *prefix, int *depth, int x, int y, Square board[BO
         return;
     }
 
+    if(x < 0 || x >= BOARD_SIZE || y < 0 || y >= BOARD_SIZE){
+        return;
+    }
+
     if(node->isWord){
         Move newMove;
         newMove.row = x;
@@ -27,34 +31,32 @@ void dfs(TrieNode *node, char *prefix, int *depth, int x, int y, Square board[BO
         *totalMovesFound += 1;
     }
 
-    if(*depth == 0){
+    if(*depth == combinationLength){
         return;
     }
 
-    strcat(prefix, combinationToTest);
+
+
+    strncat(prefix, &combinationToTest[*depth], 1);
     
-
-
+    int childIndex = combinationToTest[*depth] - 'A';
+    *depth += 1;
     switch (direction){
         case UP:
-        if(x > 0){
-            dfs(node->children[board[x-1][y].letter - 'A'], prefix, depth+1, x-1, y, board, combinationToTest, foundMoves, totalMovesFound, direction, combinationLength);
-        }
+            dfs(node->children[childIndex], prefix, depth, x, y-1, board, combinationToTest, foundMoves, totalMovesFound, direction, combinationLength);
+        
         break;
         case DOWN:
-        if(x < BOARD_SIZE - 1){
-            dfs(node->children[board[x+1][y].letter - 'A'], prefix, depth+1, x+1, y, board, combinationToTest, foundMoves, totalMovesFound, direction, combinationLength);
-        }
+            dfs(node->children[childIndex], prefix, depth, x, y+1, board, combinationToTest, foundMoves, totalMovesFound, direction, combinationLength);
+        
         break;
         case LEFT:
-        if(y > 0){
-            dfs(node->children[board[x][y-1].letter - 'A'], prefix, depth+1, x, y-1, board, combinationToTest, foundMoves, totalMovesFound, direction, combinationLength);
-        }
+            dfs(node->children[childIndex], prefix, depth, x-1, y, board, combinationToTest, foundMoves, totalMovesFound, direction, combinationLength);
+        
         break;
         case RIGHT:
-        if(y < BOARD_SIZE - 1){
-            dfs(node->children[board[x][y+1].letter - 'A'], prefix, depth+1, x, y+1, board, combinationToTest, foundMoves, totalMovesFound, direction, combinationLength);
-        }
+            dfs(node->children[childIndex], prefix, depth, x+1, y, board, combinationToTest, foundMoves, totalMovesFound, direction, combinationLength);
+        
         break;
     }
     
@@ -64,11 +66,17 @@ void findMoves(TrieNode *root, Move foundMoves[], int *totalMovesFound, Square b
 
     for (int i = 0; i < totalCombinations; i++){
         int combinationLength = strlen(combinationsToTest[i]);
-        dfs(root, "", 0, 0, 0, board, combinationsToTest[i], foundMoves, totalMovesFound, UP, combinationLength);
-        dfs(root, "", 0, 0, 0, board, combinationsToTest[i], foundMoves, totalMovesFound, DOWN, combinationLength);
-        dfs(root, "", 0, 0, 0, board, combinationsToTest[i], foundMoves, totalMovesFound, LEFT, combinationLength);
-        dfs(root, "", 0, 0, 0, board, combinationsToTest[i], foundMoves, totalMovesFound, RIGHT, combinationLength);
+        int depth = 0;
+        char prefix[16] = ""; // 16 because theres max 15 characters in a word and 1 for null terminator
+        int x = 0;
+        int y = 0;
+
+        dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, UP, combinationLength);
+        dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, DOWN, combinationLength);
+        dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, LEFT, combinationLength);
+        dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, RIGHT, combinationLength);
     }
+    
 }
 
 
@@ -126,8 +134,8 @@ void generateCombinationsRecurse(const char *letters, int totalLetters, char *co
 
 // Function to sort an array of strings alphabetically,helpful with optimizing backtracking, current implementation is bubble sort, could switch to quicksort or mergesort if needed
 void sortArrayAlphabetically(char *array[], unsigned int size) {
-    for (int i = 0; i < size - 1; i++) {
-        for (int j = 0; j < size - i - 1; j++) {
+    for (unsigned int i = 0; i < size - 1; i++) {
+        for (unsigned int j = 0; j < size - i - 1; j++) {
             if (strcmp(array[j], array[j + 1]) > 0) {
                 char *temp = array[j];
                 array[j] = array[j + 1];
