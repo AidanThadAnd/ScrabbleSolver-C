@@ -4,11 +4,13 @@
 
 #define MAX_TOTAL_COMBINATIONS 14700 //Highest amount of total combinations possible with 7 pieces in the players Hand
 
-void testSolver(char *argv[]);
+void testSolver();
 void printCombinations(char *combinations[MAX_TOTAL_COMBINATIONS], int totalCombinations);
 void testCombinationGenerator();
 void printFoundWords(char *foundWords[], int totalWordsFound);
 void printFoundMoves(Move foundMoves[], int totalMovesFound);
+
+Move foundMoves[1000000];
 
 int main(int argc, char *argv[])
 {
@@ -24,7 +26,7 @@ int main(int argc, char *argv[])
     
     
 
-    testSolver(argv);
+    testSolver();
 
 }
 
@@ -47,7 +49,7 @@ void printFoundWords(char *foundWords[], int totalWordsFound){
 }
 
 void testCombinationGenerator(){
-    char exampleLetters[] = {"CABO"};
+    char exampleLetters[] = {"ABCDEFG"};
 
     char *combinations[MAX_TOTAL_COMBINATIONS]; 
     unsigned int totalCombinations;
@@ -57,9 +59,8 @@ void testCombinationGenerator(){
 }
 
 
-void testSolver(char *argv[]){
-    char exampleLetters[] = {"CABO"};
-
+void testSolver(){
+    char exampleLetters[] = {"ABCDEFG"};
     char *combinations[MAX_TOTAL_COMBINATIONS];
     unsigned int totalCombinations;
 
@@ -70,7 +71,7 @@ void testSolver(char *argv[]){
     */
 
 
-    Move foundMoves[100000];
+    
     int foundCount = 0;
     TrieNode *root = loadDictionary("./dictionary.txt");
 

@@ -18,7 +18,7 @@ void dfs(TrieNode *node, char *prefix, int *depth, int x, int y, Square board[BO
         newMove.col = y;
         newMove.direction = direction;
         strcpy(newMove.word, prefix);
-        newMove.score = 1;
+        newMove.score = combinationLength;
 
         foundMoves[*totalMovesFound] = newMove;
         *totalMovesFound += 1;
