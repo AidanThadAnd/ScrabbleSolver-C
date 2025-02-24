@@ -2,7 +2,7 @@
 #include <stdbool.h>
 
 //DFS
-void dfs(TrieNode *node, char *prefix, int *depth, int x, int y, Square board[BOARD_SIZE][BOARD_SIZE], char *combinationToTest, Move foundMoves[], int *totalMovesFound, int direction, int combinationLength){
+static void dfs(TrieNode *node, char *prefix, int *depth, int x, int y, Square board[BOARD_SIZE][BOARD_SIZE], char *combinationToTest, Move foundMoves[], int *totalMovesFound, int direction, int combinationLength){
 
     if(node == NULL){
         return;
@@ -52,7 +52,7 @@ void dfs(TrieNode *node, char *prefix, int *depth, int x, int y, Square board[BO
     }
     
 }
-void resetValues(int *depth, char *prefix){
+static void resetValues(int *depth, char *prefix){
     *depth = 0;
     for(int i = 0; i < BOARD_SIZE+1; i++){
         prefix[i] = '\0';
@@ -86,19 +86,15 @@ void findMoves(TrieNode *root, Move foundMoves[], int *totalMovesFound, Square b
     }
 }
 
-
-
-
-
 // Function to swap two characters
-void swap(char *x, char *y) {
+static void swap(char *x, char *y) {
     char temp = *x;
     *x = *y;
     *y = temp;
 }
 
 // Function to print all permutations of a string
-void permute(char *letters, int left, int right, char *combinations[], unsigned int *totalCombinations) {
+static void permute(char *letters, int left, int right, char *combinations[], unsigned int *totalCombinations) {
     if (left == right) {
         combinations[*totalCombinations] = malloc(strlen(letters) + 1);
         strcpy(combinations[*totalCombinations], letters);
@@ -122,7 +118,7 @@ void permute(char *letters, int left, int right, char *combinations[], unsigned 
 
 
 //Loose idea as of now, will convert to full recursion at a later time
-void generateCombinationsRecurse(const char *letters, int totalLetters, char *combination, int start, int index, char *combinations[], unsigned int *totalCombinations) {
+static void generateCombinationsRecurse(const char *letters, int totalLetters, char *combination, int start, int index, char *combinations[], unsigned int *totalCombinations) {
     if (index > 0) {
         combination[index] = '\0'; // Null-terminate the combination
         permute(combination, 0, index - 1, combinations, totalCombinations);  // Generate all permutations of the current combination
@@ -140,8 +136,8 @@ void generateCombinationsRecurse(const char *letters, int totalLetters, char *co
     }
 }
 
-// Function to sort an array of strings alphabetically,helpful with optimizing backtracking, current implementation is bubble sort, could switch to quicksort or mergesort if needed
-void sortArrayAlphabetically(char *array[], unsigned int size) {
+// Function to sort an array of strings alphabetically, helpful with optimizing backtracking, current implementation is bubble sort, could switch to quicksort or mergesort if needed
+static void sortArrayAlphabetically(char *array[], unsigned int size) {
     for (unsigned int i = 0; i < size - 1; i++) {
         for (unsigned int j = 0; j < size - i - 1; j++) {
             if (strcmp(array[j], array[j + 1]) > 0) {
