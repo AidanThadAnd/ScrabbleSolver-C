@@ -13,7 +13,7 @@ void printFoundMoves(Move foundMoves[], int totalMovesFound);
 int main(int argc, char *argv[])
 {
 
-    //testCombinationGenerator();
+    testCombinationGenerator();
 
     /*
     if (argc < 2) {
@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
     
     
 
-    testSolver(argv);
+    //testSolver(argv);
 
 }
 
@@ -47,7 +47,7 @@ void printFoundWords(char *foundWords[], int totalWordsFound){
 }
 
 void testCombinationGenerator(){
-    char exampleLetters[] = {"ABB"};
+    char exampleLetters[] = {"ABCDE"};
 
     char *combinations[MAX_TOTAL_COMBINATIONS]; 
     unsigned int totalCombinations;
@@ -78,9 +78,9 @@ void testSolver(char *argv[]){
     initBoard(board);
     loadBoard(board, "./exampleBoard.txt");
 
-    findMoves(root, foundMoves, &foundCount, board, combinations);
+    findMoves(root, foundMoves, &foundCount, board, combinations, totalCombinations);
     printFoundMoves(foundMoves, foundCount);
-
+    
 }
 
 void printFoundMoves(Move foundMoves[], int totalMovesFound){

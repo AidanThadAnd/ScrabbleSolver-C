@@ -9,6 +9,7 @@
 
 #define MAX_CHARACTERS 26 //For our use case with the Trie this represents all letters A-Z
 #define BOARD_SIZE 15
+
 #define UP 0
 #define DOWN 1
 #define LEFT 2
@@ -25,7 +26,6 @@ typedef struct TrieNode {
 typedef struct Square {
     char letter;            // The letter on this square (' ' for empty).
     int bonus;             // Bonus type for this square (0: None, 1: Double Letter, 2: Triple Letter, 3: Double Word, 4: Triple Word).
-    bool visited;           // Flag indicating if this square has been visited.
 } Square;
 
 // Move Structure to store potential plays
