@@ -14,6 +14,10 @@ void printFoundMoves(Move foundMoves[], int totalMovesFound);
 
 int main(int argc, char *argv[])
 {
+    (void)argc; //Temporaily suppress compiler warning
+    (void)argv;
+
+    
 
     //testCombinationGenerator();
 
@@ -65,10 +69,6 @@ void testSolver(){
     unsigned int totalCombinations;
 
     generateCombinations(exampleLetters, combinations, &totalCombinations);
-
-    /*
-    printCombinations(combinations, totalCombinations);
-    */
 
     Move *foundMoves = malloc(1000000 * sizeof(Move));
     if (foundMoves == NULL) {
