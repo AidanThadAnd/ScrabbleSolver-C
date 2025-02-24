@@ -3,7 +3,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra -g
 
 # Source files
-COMMON_SRCS = dataStruct.c io.c solver.c 
+COMMON_SRCS = dataStruct.c io.c solver.c
 COMMON_OBJS = $(COMMON_SRCS:.c=.o)
 
 MAIN_SRCS = main.c
@@ -13,7 +13,7 @@ TESTER_SRCS = tester.c
 TESTER_OBJS = $(TESTER_SRCS:.c=.o)
 
 # Targets
-all: MAIN tester
+all: clean main tester
 
 # Build MAIN executable (uses MAIN.o + common objects)
 main: $(COMMON_OBJS) $(MAIN_OBJS)

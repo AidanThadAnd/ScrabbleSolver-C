@@ -50,3 +50,9 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+main
+tester
+.vscode/
+.vscode/settings.json
+**/.vscode/
