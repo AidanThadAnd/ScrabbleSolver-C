@@ -70,7 +70,7 @@ void testSolver(char *argv[]){
     */
 
 
-    Move foundMoves[10000];
+    Move foundMoves[100000];
     int foundCount = 0;
     TrieNode *root = loadDictionary("./dictionary.txt");
 
@@ -80,7 +80,6 @@ void testSolver(char *argv[]){
 
     findMoves(root, foundMoves, &foundCount, board, combinations, totalCombinations);
     printFoundMoves(foundMoves, foundCount);
-    
 }
 
 void printFoundMoves(Move foundMoves[], int totalMovesFound){

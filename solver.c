@@ -19,7 +19,6 @@ void dfs(TrieNode *node, char *prefix, int *depth, int x, int y, Square board[BO
         newMove.direction = direction;
         strcpy(newMove.word, prefix);
         newMove.score = 1;
-        //printf("%s\n", prefix);
 
         foundMoves[*totalMovesFound] = newMove;
         *totalMovesFound += 1;
@@ -53,13 +52,11 @@ void dfs(TrieNode *node, char *prefix, int *depth, int x, int y, Square board[BO
     }
     
 }
-void resetValues(int *depth, char *prefix, int *x, int *y){
+void resetValues(int *depth, char *prefix){
     *depth = 0;
     for(int i = 0; i < BOARD_SIZE+1; i++){
         prefix[i] = '\0';
     }
-    *x = 0;
-    *y = 0;
 }
 
 void findMoves(TrieNode *root, Move foundMoves[], int *totalMovesFound, Square board[BOARD_SIZE][BOARD_SIZE], char *combinationsToTest[], int totalCombinations){
@@ -71,13 +68,19 @@ void findMoves(TrieNode *root, Move foundMoves[], int *totalMovesFound, Square b
         int x = 0;
         int y = 0;
 
-        dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, UP, combinationLength);
-        resetValues(&depth, prefix, &x, &y);
-        dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, DOWN, combinationLength);
-        resetValues(&depth, prefix, &x, &y);
-        dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, LEFT, combinationLength);
-        resetValues(&depth, prefix, &x, &y);
-        dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, RIGHT, combinationLength);
+        for(x = 0; x <= BOARD_SIZE; x++){
+            for (y = 0; y <= BOARD_SIZE; y++){
+                dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, UP, combinationLength);
+                resetValues(&depth, prefix);
+                dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, DOWN, combinationLength);
+                resetValues(&depth, prefix);
+                dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, LEFT, combinationLength);
+                resetValues(&depth, prefix);
+                dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, RIGHT, combinationLength);
+            }
+        }
+
+
     }
 }
 
