@@ -70,6 +70,7 @@ void findMoves(TrieNode *root, Move foundMoves[], int *totalMovesFound, Square b
 
         for(x = 0; x <= BOARD_SIZE; x++){
             for (y = 0; y <= BOARD_SIZE; y++){
+
                 dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, UP, combinationLength);
                 resetValues(&depth, prefix);
                 dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, DOWN, combinationLength);
@@ -77,6 +78,7 @@ void findMoves(TrieNode *root, Move foundMoves[], int *totalMovesFound, Square b
                 dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, LEFT, combinationLength);
                 resetValues(&depth, prefix);
                 dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, RIGHT, combinationLength);
+                resetValues(&depth, prefix);
             }
         }
 

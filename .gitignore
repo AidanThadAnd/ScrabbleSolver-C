@@ -56,3 +56,4 @@ tester
 .vscode/
 .vscode/settings.json
 **/.vscode/
+output.txt

@@ -10,7 +10,7 @@ void testCombinationGenerator();
 void printFoundWords(char *foundWords[], int totalWordsFound);
 void printFoundMoves(Move foundMoves[], int totalMovesFound);
 
-Move foundMoves[1000000];
+
 
 int main(int argc, char *argv[])
 {
@@ -70,7 +70,11 @@ void testSolver(){
     printCombinations(combinations, totalCombinations);
     */
 
-
+    Move *foundMoves = malloc(1000000 * sizeof(Move));
+    if (foundMoves == NULL) {
+    fprintf(stderr, "Memory allocation failed\n");
+    exit(1);
+    }
     
     int foundCount = 0;
     TrieNode *root = loadDictionary("./dictionary.txt");
@@ -81,6 +85,9 @@ void testSolver(){
 
     findMoves(root, foundMoves, &foundCount, board, combinations, totalCombinations);
     printFoundMoves(foundMoves, foundCount);
+    
+    free(foundMoves);
+    freeTrie(root);
 }
 
 void printFoundMoves(Move foundMoves[], int totalMovesFound){
