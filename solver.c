@@ -12,13 +12,14 @@ void dfs(TrieNode *node, char *prefix, int *depth, int x, int y, Square board[BO
         return;
     }
 
-    if(node->isWord){
+    if(node->isWord && combinationLength == *depth){
         Move newMove;
         newMove.row = x;
         newMove.col = y;
         newMove.direction = direction;
-        newMove.word = prefix;
+        strcpy(newMove.word, prefix);
         newMove.score = 1;
+        //printf("%s\n", prefix);
 
         foundMoves[*totalMovesFound] = newMove;
         *totalMovesFound += 1;
@@ -54,7 +55,7 @@ void dfs(TrieNode *node, char *prefix, int *depth, int x, int y, Square board[BO
 }
 void resetValues(int *depth, char *prefix, int *x, int *y){
     *depth = 0;
-    for(int i = 0; i < 16; i++){
+    for(int i = 0; i < BOARD_SIZE+1; i++){
         prefix[i] = '\0';
     }
     *x = 0;
@@ -66,7 +67,7 @@ void findMoves(TrieNode *root, Move foundMoves[], int *totalMovesFound, Square b
     for (int i = 0; i < totalCombinations; i++){
         int combinationLength = strlen(combinationsToTest[i]);
         int depth = 0;
-        char prefix[16] = ""; // 16 because theres max 15 characters in a word and 1 for null terminator
+        char prefix[BOARD_SIZE+1] = "";
         int x = 0;
         int y = 0;
 

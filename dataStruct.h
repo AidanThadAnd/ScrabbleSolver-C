@@ -33,7 +33,7 @@ typedef struct Move {
     int row;                // Row where the word starts.
     int col;                // Column where the word starts.
     int direction;          // Direction of the word (0: Horizontal, 1: Vertical).
-    char *word;             // The word being played.
+    char word[BOARD_SIZE+1];// The word being played. (Extra space for null terminator)
     int score;              // Score of the play.
 } Move;
 
