@@ -74,7 +74,6 @@ void testSolver(char *argv[]){
     int foundCount = 0;
     TrieNode *root = loadDictionary("./dictionary.txt");
 
-
     Square board[BOARD_SIZE][BOARD_SIZE];
     initBoard(board);
     loadBoard(board, "./exampleBoard.txt");

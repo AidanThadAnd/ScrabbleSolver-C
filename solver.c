@@ -1,13 +1,6 @@
 #include "solver.h"
 #include <stdbool.h>
 
-/*
-Functions we need
-- Find words ()
-- DFS algo (recursive)
-
-*/
-
 //DFS
 void dfs(TrieNode *node, char *prefix, int *depth, int x, int y, Square board[BOARD_SIZE][BOARD_SIZE], char *combinationToTest, Move foundMoves[], int *totalMovesFound, int direction, int combinationLength){
 
@@ -35,8 +28,6 @@ void dfs(TrieNode *node, char *prefix, int *depth, int x, int y, Square board[BO
         return;
     }
 
-
-
     strncat(prefix, &combinationToTest[*depth], 1);
     
     int childIndex = combinationToTest[*depth] - 'A';
@@ -61,6 +52,14 @@ void dfs(TrieNode *node, char *prefix, int *depth, int x, int y, Square board[BO
     }
     
 }
+void resetValues(int *depth, char *prefix, int *x, int *y){
+    *depth = 0;
+    for(int i = 0; i < 16; i++){
+        prefix[i] = '\0';
+    }
+    *x = 0;
+    *y = 0;
+}
 
 void findMoves(TrieNode *root, Move foundMoves[], int *totalMovesFound, Square board[BOARD_SIZE][BOARD_SIZE], char *combinationsToTest[], int totalCombinations){
 
@@ -72,12 +71,15 @@ void findMoves(TrieNode *root, Move foundMoves[], int *totalMovesFound, Square b
         int y = 0;
 
         dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, UP, combinationLength);
+        resetValues(&depth, prefix, &x, &y);
         dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, DOWN, combinationLength);
+        resetValues(&depth, prefix, &x, &y);
         dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, LEFT, combinationLength);
+        resetValues(&depth, prefix, &x, &y);
         dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, RIGHT, combinationLength);
     }
-    
 }
+
 
 
 
