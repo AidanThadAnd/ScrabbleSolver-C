@@ -9,13 +9,14 @@ void printCombinations(char *combinations[MAX_TOTAL_COMBINATIONS], int totalComb
 void testCombinationGenerator();
 void printFoundWords(char *foundWords[], int totalWordsFound);
 void printFoundMoves(Move foundMoves[], int totalMovesFound);
+void duplicateFinder(Move foundMoves[], int totalMovesFound);
 
 int main(int argc, char *argv[])
 {
     (void)argc; // Temporaily suppress compiler warning
     (void)argv;
 
-    // testCombinationGenerator();
+    //testCombinationGenerator();
 
     /*
     if (argc < 2) {
@@ -67,7 +68,7 @@ void testSolver()
 
     generateCombinations(exampleLetters, combinations, &totalCombinations);
 
-    Move *foundMoves = malloc(1000000 * sizeof(Move));
+    Move *foundMoves = malloc(1000000000 * sizeof(Move));
     if (foundMoves == NULL)
     {
         fprintf(stderr, "Memory allocation failed\n");
@@ -83,6 +84,7 @@ void testSolver()
 
     findMoves(root, foundMoves, &foundCount, board, combinations, totalCombinations);
     printFoundMoves(foundMoves, foundCount);
+    //duplicateFinder(foundMoves, foundCount);
 
     free(foundMoves);
     freeTrie(root);
@@ -93,5 +95,24 @@ void printFoundMoves(Move foundMoves[], int totalMovesFound)
     for (int i = 0; i < totalMovesFound; i++)
     {
         printf("Row: %i, Col: %i, Direction: %i, Word: %s, Score: %i\n", foundMoves[i].row, foundMoves[i].col, foundMoves[i].direction, foundMoves[i].word, foundMoves[i].score);
+    }
+}
+
+void duplicateFinder(Move foundMoves[], int totalMovesFound)
+{
+    for (int i = 0; i < totalMovesFound; i++)
+    {
+        for (int j = 0; j < i; j++)
+        {
+            if (foundMoves[i].row == foundMoves[j].row &&
+                foundMoves[i].col == foundMoves[j].col &&
+                foundMoves[i].direction == foundMoves[j].direction &&
+                strcmp(foundMoves[i].word, foundMoves[j].word) == 0 &&
+                foundMoves[i].score == foundMoves[j].score)
+            {
+                printf("Duplicate found: Row: %i, Col: %i, Direction: %i, Word: %s, Score: %i\n", foundMoves[i].row, foundMoves[i].col, foundMoves[i].direction, foundMoves[i].word, foundMoves[i].score);
+                return;
+            }
+        }
     }
 }

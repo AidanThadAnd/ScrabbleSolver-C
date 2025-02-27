@@ -1,10 +1,11 @@
 #include "solver.h"
 #include <stdbool.h>
 
-// DFS
-static void dfs(TrieNode *node, char *prefix, int *depth, int x, int y, Square board[BOARD_SIZE][BOARD_SIZE], char *combinationToTest, Move foundMoves[], int *totalMovesFound, int direction, int combinationLength)
-{
+static void findStartingSquare(const int x, const int y, const int direction, const int currentCombinationIndex, Move *move);
 
+// DFS
+static void dfs(TrieNode *node, char *prefix, int *depth, int x, int y, Square board[BOARD_SIZE][BOARD_SIZE], char *combinationToTest, Move foundMoves[], int *totalMovesFound, int direction, int *currentCombinationIndex)
+{
     if (node == NULL)
     {
         return;
@@ -15,50 +16,93 @@ static void dfs(TrieNode *node, char *prefix, int *depth, int x, int y, Square b
         return;
     }
 
-    if (node->isWord && combinationLength == *depth)
+    if(*currentCombinationIndex >= (int)strlen(combinationToTest)){
+        return;
+    }
+
+    /*
+    if (board[y][x].letter != ' ')
+    {
+        node = node->children[board[y][x].letter - 'A'];
+        strncat(prefix, &board[y][x].letter, 1);
+        *depth += 1;
+    }
+    */
+
+    if (node->isWord && *currentCombinationIndex == (int)strlen(combinationToTest))
     {
         Move newMove;
-        newMove.row = x;
-        newMove.col = y;
+        
         newMove.direction = direction;
+        newMove.score = *depth;
         strcpy(newMove.word, prefix);
-        newMove.score = combinationLength;
+        findStartingSquare(x, y, direction, *depth, &newMove);
 
         foundMoves[*totalMovesFound] = newMove;
         *totalMovesFound += 1;
     }
 
-    if (*depth == combinationLength)
-    {
-        return;
-    }
+    strncat(prefix, &combinationToTest[*currentCombinationIndex], 1);
 
-    strncat(prefix, &combinationToTest[*depth], 1);
+    int childIndex = combinationToTest[*currentCombinationIndex] - 'A';
 
-    int childIndex = combinationToTest[*depth] - 'A';
+
     *depth += 1;
+    *currentCombinationIndex += 1;
+/*
+if (board[y][x].letter != ' ')
+{
+    }
+    */
+
+
+    
     switch (direction)
     {
     case UP:
-        dfs(node->children[childIndex], prefix, depth, x, y - 1, board, combinationToTest, foundMoves, totalMovesFound, direction, combinationLength);
+        dfs(node->children[childIndex], prefix, depth, x, y - 1, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex);
 
         break;
     case DOWN:
-        dfs(node->children[childIndex], prefix, depth, x, y + 1, board, combinationToTest, foundMoves, totalMovesFound, direction, combinationLength);
+        dfs(node->children[childIndex], prefix, depth, x, y + 1, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex);
 
         break;
     case LEFT:
-        dfs(node->children[childIndex], prefix, depth, x - 1, y, board, combinationToTest, foundMoves, totalMovesFound, direction, combinationLength);
+        dfs(node->children[childIndex], prefix, depth, x - 1, y, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex);
 
         break;
     case RIGHT:
-        dfs(node->children[childIndex], prefix, depth, x + 1, y, board, combinationToTest, foundMoves, totalMovesFound, direction, combinationLength);
+        dfs(node->children[childIndex], prefix, depth, x + 1, y, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex);
 
         break;
     }
 }
-static void resetValues(int *depth, char *prefix)
+
+static void findStartingSquare(const int x, const int y, const int direction, const int combinationLength, Move *move){
+    switch (direction)
+    {
+    case UP:
+        move->row = y + combinationLength;
+        move->col = x;
+        break;
+    case DOWN:
+        move->row = y - combinationLength;
+        move->col = x;
+        break;
+    case LEFT:
+        move->col = x + combinationLength;
+        move->row = y;
+        break;
+    case RIGHT:
+        move->col = x - combinationLength;
+        move->row = y;
+        break;
+    }
+}
+
+static void resetValues(int *depth, char *prefix, int *currentCombinationIndex)
 {
+    *currentCombinationIndex = 0;
     *depth = 0;
     for (int i = 0; i < BOARD_SIZE + 1; i++)
     {
@@ -68,10 +112,9 @@ static void resetValues(int *depth, char *prefix)
 
 void findMoves(TrieNode *root, Move foundMoves[], int *totalMovesFound, Square board[BOARD_SIZE][BOARD_SIZE], char *combinationsToTest[], int totalCombinations)
 {
-
     for (int i = 0; i < totalCombinations; i++)
     {
-        int combinationLength = strlen(combinationsToTest[i]);
+        int currentCombinationIndex = 0;
         int depth = 0;
         char prefix[BOARD_SIZE + 1] = "";
         int x = 0;
@@ -81,15 +124,14 @@ void findMoves(TrieNode *root, Move foundMoves[], int *totalMovesFound, Square b
         {
             for (y = 0; y <= BOARD_SIZE; y++)
             {
-
-                dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, UP, combinationLength);
-                resetValues(&depth, prefix);
-                dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, DOWN, combinationLength);
-                resetValues(&depth, prefix);
-                dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, LEFT, combinationLength);
-                resetValues(&depth, prefix);
-                dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, RIGHT, combinationLength);
-                resetValues(&depth, prefix);
+                dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, UP, &currentCombinationIndex);
+                resetValues(&depth, prefix, &currentCombinationIndex);
+                dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, DOWN, &currentCombinationIndex);
+                resetValues(&depth, prefix, &currentCombinationIndex);
+                dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, LEFT, &currentCombinationIndex);
+                resetValues(&depth, prefix, &currentCombinationIndex);
+                dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, RIGHT, &currentCombinationIndex);
+                resetValues(&depth, prefix, &currentCombinationIndex);
             }
         }
     }
