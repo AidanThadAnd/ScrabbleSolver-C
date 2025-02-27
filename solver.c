@@ -29,7 +29,7 @@ static void dfs(TrieNode *node, char *prefix, int *depth, int x, int y, Square b
     }
     */
 
-    if (node->isWord && *currentCombinationIndex == (int)strlen(combinationToTest))
+    if (node->isWord && *depth == (int)strlen(combinationToTest) - 1)
     {
         Move newMove;
         

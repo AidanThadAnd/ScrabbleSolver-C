@@ -63,10 +63,13 @@ void testCombinationGenerator()
 void testSolver()
 {
     char exampleLetters[] = {"AEINRST"}; // Leads to the most possible sub words in 7 characters
+    //char exampleLetters[] = {"ABCDEFG"}; // Leads to the most possible sub words in 7 characters
     char *combinations[MAX_TOTAL_COMBINATIONS];
     unsigned int totalCombinations;
 
     generateCombinations(exampleLetters, combinations, &totalCombinations);
+
+
 
     Move *foundMoves = malloc(1000000000 * sizeof(Move));
     if (foundMoves == NULL)
