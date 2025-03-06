@@ -52,7 +52,7 @@ void printFoundWords(char *foundWords[], int totalWordsFound)
 
 void testCombinationGenerator()
 {
-    char exampleLetters[] = {"ABCDEFG"};
+    char exampleLetters[] = {"ABSOLUT"};
 
     char *combinations[MAX_TOTAL_COMBINATIONS];
     unsigned int totalCombinations;
@@ -65,8 +65,9 @@ void testSolver()
 {
     //char exampleLetters[] = {"AEINRST"}; // Leads to the most possible sub words in 7 characters
     //char exampleLetters[] = {"ABCDEFG"}; // Leads to the most possible sub words in 7 characters
-    char exampleLetters[] = {"ASOLUTE"}; //Tests 8 letter word generation for ABSOLUTELY
-    //char exampleLetters[] = {"QUICKBE"}; //Tests 9 letter word generation for ABSOLUTELY
+    //char exampleLetters[] = {"ASOLUTE"}; //Tests 8 letter word generation for ABSOLUTELY
+    //char exampleLetters[] = {"ICKBEAM"}; //Tests 9 letter word generation for QUICKBEAM
+    char exampleLetters[] = {"ABSOLU"};
 
     char *combinations[MAX_TOTAL_COMBINATIONS];
     unsigned int totalCombinations;
@@ -76,6 +77,7 @@ void testSolver()
 
 
     Move *foundMoves = malloc(100000 * sizeof(Move));
+    Move bestMove;
     if (foundMoves == NULL)
     {
         fprintf(stderr, "Memory allocation failed\n");
@@ -93,9 +95,11 @@ void testSolver()
 
     
     findMoves(root, foundMoves, &foundCount, board, combinations, totalCombinations);
-    printFoundMoves(foundMoves, foundCount);
+    //printFoundMoves(foundMoves, foundCount);
     //duplicateFinder(foundMoves, foundCount);
-    
+    pickBestMove(foundMoves, foundCount, &bestMove);
+
+    printf("Row: %i, Col: %i, Direction: %i, Word: %s, Score: %i\n", bestMove.row, bestMove.col, bestMove.direction, bestMove.word, bestMove.score);
 
     free(foundMoves);
     freeTrie(root);

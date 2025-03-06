@@ -159,6 +159,7 @@ static void checkValidPlacements(Square board[BOARD_SIZE][BOARD_SIZE]){
         for(int col = 0; col < BOARD_SIZE; col++){
             if(board[row][col].letter != ' '){
                 changeValidPlacement(board, row, col);
+                board[row][col].validPlacement = true;
             }
         }
     }

@@ -2,16 +2,12 @@
 #include <stdbool.h>
 
 static void findStartingSquare(const int x, const int y, const int direction, const int currentCombinationIndex, Move *move);
+static void reverseString(char *oldString, char *newString);
 
 // DFS
-static void dfs(TrieNode *node, char *prefix, int *depth, int x, int y, Square board[BOARD_SIZE][BOARD_SIZE], char *combinationToTest, Move foundMoves[], int *totalMovesFound, int direction, int *currentCombinationIndex)
+static void dfs(TrieNode *head, char *prefix, int *depth, int x, int y, Square board[BOARD_SIZE][BOARD_SIZE], char *combinationToTest, Move foundMoves[], int *totalMovesFound, int direction, int *currentCombinationIndex)
 {
-    if (node == NULL)
-    {
-        return;
-    }
-
-    if (x < 0 || x >= BOARD_SIZE || y < 0 || y >= BOARD_SIZE)
+    if (x < 0 || x > BOARD_SIZE || y < 0 || y > BOARD_SIZE)
     {
         return;
     }
@@ -20,86 +16,92 @@ static void dfs(TrieNode *node, char *prefix, int *depth, int x, int y, Square b
     {
         return;
     }
-    
-    if (board[y][x].letter != ' ')
-    {
-        node = node->children[board[y][x].letter - 'A'];
-        
-        if (node == (TrieNode *)0x45495453414c504f)
-        {
-            return;
-        }
 
+    while (board[y][x].letter != ' ' && y < BOARD_SIZE && x < BOARD_SIZE) // Small issue with recursion where words at the bounds are returned early due to board[y][x].letter != ' ' returning true when accessing elements outside of the board
+    {
         strncat(prefix, &board[y][x].letter, 1);
         *depth += 1;
-        
+
         switch (direction)
         {
-            case UP:
+        case UP:
             y -= 1;
             break;
-            case DOWN:
+        case DOWN:
             y += 1;
             break;
-            case LEFT:
+        case LEFT:
             x -= 1;
             break;
-            case RIGHT:
+        case RIGHT:
             x += 1;
             break;
         }
     }
-    if (node == NULL)
-    {
-        return;
+
+    char *reversePrefix = malloc(strlen(prefix) + 1);
+    reverseString(prefix, reversePrefix);
+
+    int reversePrefixIsWord = 0;
+    
+    if(direction == UP || direction == LEFT){
+        reversePrefixIsWord = searchWord(head, reversePrefix);
     }
 
 
-    if (node->isWord && *currentCombinationIndex == (int)strlen(combinationToTest))
+    if ((reversePrefixIsWord || searchWord(head, prefix)) && *currentCombinationIndex == (int)strlen(combinationToTest))
     {
         Move newMove;
 
         newMove.direction = direction;
         newMove.score = *depth;
+        if(reversePrefixIsWord){
+            strcpy(newMove.word, reversePrefix);
+            newMove.row = y;
+            newMove.col = x;
+        } else {
         strcpy(newMove.word, prefix);
         findStartingSquare(x, y, direction, *depth, &newMove);
-
+        }
         foundMoves[*totalMovesFound] = newMove;
         *totalMovesFound += 1;
     }
 
     strncat(prefix, &combinationToTest[*currentCombinationIndex], 1);
 
-    int childIndex = combinationToTest[*currentCombinationIndex] - 'A';
-
     *depth += 1;
     *currentCombinationIndex += 1;
-
-    /*
-    if (board[y][x].letter != ' ')
-    {
-        }
-        */
+    free(reversePrefix);
 
     switch (direction)
     {
     case UP:
-        dfs(node->children[childIndex], prefix, depth, x, y - 1, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex);
+        dfs(head, prefix, depth, x, y - 1, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex);
 
         break;
     case DOWN:
-        dfs(node->children[childIndex], prefix, depth, x, y + 1, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex);
+        dfs(head, prefix, depth, x, y + 1, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex);
 
         break;
     case LEFT:
-        dfs(node->children[childIndex], prefix, depth, x - 1, y, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex);
+        dfs(head, prefix, depth, x - 1, y, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex);
 
         break;
     case RIGHT:
-        dfs(node->children[childIndex], prefix, depth, x + 1, y, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex);
+        dfs(head, prefix, depth, x + 1, y, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex);
 
         break;
     }
+}
+
+static void reverseString(char *oldString, char *newString)
+{
+    int length = strlen(oldString);
+    for (int i = 0; i < length; i++)
+    {
+        newString[i] = oldString[length - i - 1];
+    }
+    newString[length] = '\0';
 }
 
 static void findStartingSquare(const int x, const int y, const int direction, const int combinationLength, Move *move)
@@ -145,9 +147,9 @@ void findMoves(TrieNode *root, Move foundMoves[], int *totalMovesFound, Square b
         int x = 0;
         int y = 0;
 
-        for (x = 0; x <= BOARD_SIZE; x++)
+        for (x = 0; x < BOARD_SIZE; x++)
         {
-            for (y = 0; y <= BOARD_SIZE; y++)
+            for (y = 0; y < BOARD_SIZE; y++)
             {
                 if (board[y][x].validPlacement)
                 {
@@ -249,4 +251,15 @@ void generateCombinations(const char *letters, char *combinations[], unsigned in
 
     generateCombinationsRecurse(letters, totalLetters, currCombination, 0, 0, combinations, totalCombinations);
     sortArrayAlphabetically(combinations, *totalCombinations);
+}
+
+void pickBestMove(Move foundMoves[], int totalMovesFound, Move *bestMove)
+{
+    for (int i = 0; i < totalMovesFound; i++)
+    {
+        if (foundMoves[i].score > bestMove->score)
+        {
+            *bestMove = foundMoves[i];
+        }
+    }
 }
