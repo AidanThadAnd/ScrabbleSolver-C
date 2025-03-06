@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdbool.h>
 
 #define BOARD_SIZE 15
 #define CENTER 7
@@ -77,7 +78,113 @@ void loadBoard(Square board[BOARD_SIZE][BOARD_SIZE], const char *filename) {
     fclose(file);
 }
 
-//TODO: Validate board function (Ensure center letter is used, no isolated words, etc.)
+bool isValidPosition(Square board[BOARD_SIZE][BOARD_SIZE], int row, int col) {
+
+    // Check if the position is within the board bounds
+    return (row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE);
+
+}
+
+void boardDFS(Square board[BOARD_SIZE][BOARD_SIZE], int row, int col, bool **visited) {
+
+    // Base cases: out of bounds, already visited, or empty square
+    if (row < 0 || row >= BOARD_SIZE || col < 0 || col >= BOARD_SIZE || visited[row][col] || board[row][col].letter == ' ') {
+        return;
+    }
+
+    visited[row][col] = true; // Mark the current square as visited
+
+    // Recursively visit adjacent squares
+    boardDFS(board, row - 1, col, visited); // Up
+    boardDFS(board, row + 1, col, visited); // Down
+    boardDFS(board, row, col - 1, visited); // Left
+    boardDFS(board, row, col + 1, visited); // Right
+}
+
+bool isBoardConnected(Square board[BOARD_SIZE][BOARD_SIZE]) {
+
+    // Find the first non-empty square to start DFS
+    int startRow = -1, startCol = -1;
+    for (int i = 0; i < BOARD_SIZE; ++i) {
+        for (int j = 0; j < BOARD_SIZE; ++j) {
+            if (board[i][j].letter != ' ') {
+                startRow = i;
+                startCol = j;
+                break; // Found the start, exit inner loop
+            }
+        }
+        if (startRow != -1) {
+            break; // Found the start, exit outer loop
+        }
+    }
+
+    // If the board is empty, it's considered connected
+    if (startRow == -1) {
+        return true;
+    }
+
+    // Allocate memory for the visited matrix
+    bool **visited = (bool **)malloc(BOARD_SIZE * sizeof(bool *));
+    for (int i = 0; i < BOARD_SIZE; ++i) {
+        visited[i] = (bool *)malloc(BOARD_SIZE * sizeof(bool));
+        memset(visited[i], false, BOARD_SIZE * sizeof(bool)); // Initialize to false
+    }
+
+    boardDFS(board, startRow, startCol, visited); // Start DFS from the first non-empty square
+
+    // Check if all non-empty squares were visited
+    for (int i = 0; i < BOARD_SIZE; ++i) {
+        for (int j = 0; j < BOARD_SIZE; ++j) {
+            if (board[i][j].letter != ' ' && !visited[i][j]) {
+                // Free memory
+                for (int k = 0; k < BOARD_SIZE; k++) {
+                  free(visited[k]);
+                }
+                free(visited);
+                return false; // Found a disconnected square
+            }
+        }
+    }
+
+    // Free the memory.
+    for (int i = 0; i < BOARD_SIZE; i++) {
+        free(visited[i]);
+    }
+    free(visited);
+
+    return true; // All non-empty squares are connected
+}
+
+bool isBoardEmpty(Square board[BOARD_SIZE][BOARD_SIZE]) {
+
+    for (int row = 0; row < BOARD_SIZE; row++) {
+        for (int col = 0; col < BOARD_SIZE; col++) {
+            if (board[row][col].letter != ' ') {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+bool validateBoard(Square board[BOARD_SIZE][BOARD_SIZE]) {
+
+    if (isBoardEmpty(board)) {
+        return true;
+    }
+
+    if (board[CENTER][CENTER].letter == ' ' && !isBoardEmpty(board)) {
+        printf("Center square is not used!\n");
+        return false;
+    }
+
+    if (!isBoardConnected(board)) {
+        printf("Board is not connected!\n");
+        return false;
+    }
+
+    return true;
+}
 
 void printBoard(Square board[BOARD_SIZE][BOARD_SIZE]) {
 
@@ -98,9 +205,16 @@ int main(int argc, char *argv[]) {
     }
 
     Square board[BOARD_SIZE][BOARD_SIZE];
-    initializeBoard(board);
+    initBoard(board);
     loadBoard(board, argv[1]);
 
+    if (!validateBoard(board)) {
+        printf("Board validation failed!\n");
+        printBoard(board);
+        return 1;
+    }
+
+    printf("\n Board is valid!\n");
     printBoard(board);
     return 0;
 }

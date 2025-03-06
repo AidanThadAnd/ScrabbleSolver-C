@@ -108,7 +108,7 @@ void testDictionary(const char *filename) {
         return;
     }
 
-    const char *testWords[] = {"APPLE", "MANGO", "PEACH", "GRAPES", "BANANA"};
+    const char *testWords[] = {"APPLE", "MANGO", "PEACH", "GRAPES", "BANANA", "GGGGGGG"};
     int numTests = sizeof(testWords) / sizeof(testWords[0]);
 
     printf("Dictionary Test Results:\n");
