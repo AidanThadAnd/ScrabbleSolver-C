@@ -26,6 +26,7 @@ typedef struct TrieNode {
 typedef struct Square {
     char letter;            // The letter on this square (' ' for empty).
     int bonus;             // Bonus type for this square (0: None, 1: Double Letter, 2: Triple Letter, 3: Double Word, 4: Triple Word).
+    bool validPlacement;   // Flag indicating if a letter can be placed on this square.
 } Square;
 
 // Move Structure to store potential plays
@@ -46,6 +47,8 @@ int searchWord(TrieNode *root, const char *word);
 void printBoard(Square board[BOARD_SIZE][BOARD_SIZE]);
 void loadBoard(Square board[BOARD_SIZE][BOARD_SIZE], const char *filename);
 void initBoard(Square board[BOARD_SIZE][BOARD_SIZE]);
+
+
 
 
 #endif

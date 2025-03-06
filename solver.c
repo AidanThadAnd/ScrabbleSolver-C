@@ -124,14 +124,17 @@ void findMoves(TrieNode *root, Move foundMoves[], int *totalMovesFound, Square b
         {
             for (y = 0; y <= BOARD_SIZE; y++)
             {
-                dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, UP, &currentCombinationIndex);
-                resetValues(&depth, prefix, &currentCombinationIndex);
-                dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, DOWN, &currentCombinationIndex);
-                resetValues(&depth, prefix, &currentCombinationIndex);
-                dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, LEFT, &currentCombinationIndex);
-                resetValues(&depth, prefix, &currentCombinationIndex);
-                dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, RIGHT, &currentCombinationIndex);
-                resetValues(&depth, prefix, &currentCombinationIndex);
+                if(board[y][x].validPlacement)
+                {
+                    dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, UP, &currentCombinationIndex);
+                    resetValues(&depth, prefix, &currentCombinationIndex);
+                    dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, DOWN, &currentCombinationIndex);
+                    resetValues(&depth, prefix, &currentCombinationIndex);
+                    dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, LEFT, &currentCombinationIndex);
+                    resetValues(&depth, prefix, &currentCombinationIndex);
+                    dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, RIGHT, &currentCombinationIndex);
+                    resetValues(&depth, prefix, &currentCombinationIndex);
+                }
             }
         }
     }

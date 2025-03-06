@@ -1,5 +1,9 @@
 #include "dataStruct.h"
 
+//Prototypes
+static void changeValidPlacement(Square board[BOARD_SIZE][BOARD_SIZE], int row, int col);
+static void checkValidPlacement(Square board[BOARD_SIZE][BOARD_SIZE]);
+
 TrieNode *createTrieNode(char letter){
 
     TrieNode *node = (TrieNode *)malloc(sizeof(TrieNode));
@@ -83,6 +87,7 @@ void initBoard(Square board[BOARD_SIZE][BOARD_SIZE]) {
         for(int col = 0; col < BOARD_SIZE; col++){
             board[row][col].letter = ' ';
             board[row][col].bonus = 0;
+            board[row][col].validPlacement = false;
         }
     }
 
@@ -122,14 +127,20 @@ void loadBoard(Square board[BOARD_SIZE][BOARD_SIZE], const char *filename) {
         for (int col = 0; col < BOARD_SIZE; col++) {
             if (line[col] == '_') {
                 board[row][col].letter = ' '; // Treat '_' as an empty space
+            } else if(line[col] == '%'){
+                board[row][col].letter = ' '; // Treat newline as an empty space
+                board[row][col].validPlacement = true;
             } else {
                 board[row][col].letter = line[col]; // Copy the character from the file
             }
         }
     }
+    checkValidPlacement(board);
 
     fclose(file);
 }
+
+
 
 //TODO: Validate board function (Ensure center letter is used, no isolated words, etc.)
 
@@ -142,5 +153,31 @@ void printBoard(Square board[BOARD_SIZE][BOARD_SIZE]) {
 
         }
         printf("\n");
+    }
+}
+
+static void checkValidPlacement(Square board[BOARD_SIZE][BOARD_SIZE]){
+
+    for(int row = 0; row < BOARD_SIZE; row++){
+        for(int col = 0; col < BOARD_SIZE; col++){
+            if(board[row][col].letter != ' '){
+                changeValidPlacement(board, row, col);
+            }
+        }
+    }
+}
+
+static void changeValidPlacement(Square board[BOARD_SIZE][BOARD_SIZE], int row, int col){
+    if(row + 1 < BOARD_SIZE && board[row+1][col].letter == ' '){
+        board[row +1][col].validPlacement = true;
+    }
+    if(row - 1 < BOARD_SIZE && board[row-1][col].letter == ' '){
+        board[row -1][col].validPlacement = true;
+    }
+    if(col + 1 < BOARD_SIZE && board[row][col+1].letter == ' '){
+        board[row][col +1].validPlacement = true;
+    }
+    if(col - 1 < BOARD_SIZE && board[row][col-1].letter == ' '){
+        board[row][col -1].validPlacement = true;
     }
 }

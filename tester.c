@@ -10,6 +10,7 @@ void testCombinationGenerator();
 void printFoundWords(char *foundWords[], int totalWordsFound);
 void printFoundMoves(Move foundMoves[], int totalMovesFound);
 void duplicateFinder(Move foundMoves[], int totalMovesFound);
+void checkValidPlacements(Square board[BOARD_SIZE][BOARD_SIZE]);
 
 int main(int argc, char *argv[])
 {
@@ -85,9 +86,13 @@ void testSolver()
     initBoard(board);
     loadBoard(board, "./exampleBoard.txt");
 
+    //checkValidPlacements(board);
+
+    
     findMoves(root, foundMoves, &foundCount, board, combinations, totalCombinations);
     printFoundMoves(foundMoves, foundCount);
     //duplicateFinder(foundMoves, foundCount);
+    
 
     free(foundMoves);
     freeTrie(root);
@@ -115,6 +120,20 @@ void duplicateFinder(Move foundMoves[], int totalMovesFound)
             {
                 printf("Duplicate found: Row: %i, Col: %i, Direction: %i, Word: %s, Score: %i\n", foundMoves[i].row, foundMoves[i].col, foundMoves[i].direction, foundMoves[i].word, foundMoves[i].score);
                 return;
+            }
+        }
+    }
+}
+
+void checkValidPlacements(Square board[BOARD_SIZE][BOARD_SIZE])
+{
+    for (int row = 0; row < BOARD_SIZE; row++)
+    {
+        for (int col = 0; col < BOARD_SIZE; col++)
+        {
+            if (board[row][col].validPlacement == true)
+            {
+                printf("A valid Placement is: Row: %i, Col: %i\n", row, col);
             }
         }
     }
