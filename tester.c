@@ -1,12 +1,19 @@
 #include "io.h"
 #include "dataStruct.h"
 #include "solver.h"
+#include <stdio.h>
 
-#define MAX_TOTAL_COMBINATIONS 14700 // Highest amount of total combinations possible with 7 pieces in the players Hand
+#define MAX_TOTAL_COMBINATIONS 150000 // Highest amount of total combinations possible with 7 pieces in the players Hand
 
-void testSolver();
+#define GREEN "\033[1;32m"
+#define RED "\033[1;31m"
+#define RESET "\033[0m"
+
+void testSolver(char exampleLetters[]);
+void strToLower(const char *src, char *dst);
+void validateCombinations(char exampleLetters[], char *combinations[MAX_TOTAL_COMBINATIONS], int totalCombinations);
 void printCombinations(char *combinations[MAX_TOTAL_COMBINATIONS], int totalCombinations);
-void testCombinationGenerator();
+void testCombinationGenerator(char exampleLetters[]);
 void printFoundWords(char *foundWords[], int totalWordsFound);
 void printFoundMoves(Move foundMoves[], int totalMovesFound);
 void duplicateFinder(Move foundMoves[], int totalMovesFound);
@@ -16,17 +23,13 @@ int main(int argc, char *argv[])
 {
     (void)argc; // Temporaily suppress compiler warning
     (void)argv;
+    char testLetters1[] = {"ICKBEAM"}; //Tests 9 letter word generation for QUICKBEAM
+    char testLetters2[] = {"ABSOLU"}; //Tests 9 letter word for ABSOLUTER 
 
-    //testCombinationGenerator();
-
-    /*
-    if (argc < 2) {
-        printf("Missing required inputs");
-        return 1;
-    }
-    */
-
-    testSolver();
+    testCombinationGenerator(testLetters1);
+    testCombinationGenerator(testLetters2);
+    testSolver(testLetters1);
+    testSolver(testLetters2);
 }
 
 void printCombinations(char *combinations[MAX_TOTAL_COMBINATIONS], int totalCombinations)
@@ -50,32 +53,108 @@ void printFoundWords(char *foundWords[], int totalWordsFound)
     printf("Total amount of words found: %i\n", totalWordsFound);
 }
 
-void testCombinationGenerator()
+void testCombinationGenerator(char exampleLetters[])
 {
-    char exampleLetters[] = {"ABSOLUT"};
-
     char *combinations[MAX_TOTAL_COMBINATIONS];
-    unsigned int totalCombinations;
+    unsigned int totalCombinations = 0;
 
     generateCombinations(exampleLetters, combinations, &totalCombinations);
-    printCombinations(combinations, totalCombinations);
+    validateCombinations(exampleLetters, combinations, totalCombinations);
 }
 
-void testSolver()
+
+void validateCombinations(char exampleLetters[], char *combinations[MAX_TOTAL_COMBINATIONS], int totalCombinations)
 {
-    //char exampleLetters[] = {"AEINRST"}; // Leads to the most possible sub words in 7 characters
-    //char exampleLetters[] = {"ABCDEFG"}; // Leads to the most possible sub words in 7 characters
-    //char exampleLetters[] = {"ASOLUTE"}; //Tests 8 letter word generation for ABSOLUTELY
-    //char exampleLetters[] = {"ICKBEAM"}; //Tests 9 letter word generation for QUICKBEAM
-    char exampleLetters[] = {"ABSOLU"};
+    bool error = false;
+    char filePath[256];
+    snprintf(filePath, sizeof(filePath), "./solverTests/%s/%sCombinations.txt", exampleLetters, exampleLetters);
+    FILE *file = fopen(filePath, "r");
+    if (file == NULL)
+    {
+        fprintf(stderr, "Failed to open file: %s\n", filePath);
+        return;
+    }
 
+    char line[256];
+    for (int i = 0; i < totalCombinations; i++)
+    {
+        
+        if (fgets(line, sizeof(line), file) == NULL)
+        {
+            fprintf(stderr, "Error: Not enough lines in file for combination %s\n", combinations[i]);
+            fclose(file);
+            return;
+        }
+        
+
+        // Remove newline character from the line read from the file
+        line[strcspn(line, "\n")] = '\0';
+
+        if (strcmp(line, combinations[i]) != 0)
+        {
+            error = true;
+        }
+    }
+    printf("%s[ %s ]%s Combination test: %s\n",
+        (!error) ? GREEN : RED,
+        (!error) ? "PASSED" : "FAILED",
+        RESET,
+        exampleLetters);
+    
+    fclose(file);
+}
+
+void validateSolver(Move foundMoves[], int totalMovesFound, char exampleLetters[])
+{
+    bool error = false;
+    char filePath[256];
+    snprintf(filePath, sizeof(filePath), "./solverTests/%s/%sOutput.txt", exampleLetters, exampleLetters);
+    FILE *file = fopen(filePath, "r");
+    if (file == NULL)
+    {
+        fprintf(stderr, "Failed to open file: %s\n", filePath);
+        return;
+    }
+
+    char line[256];
+    for (int i = 0; i < totalMovesFound; i++)
+    {
+        
+        if (fgets(line, sizeof(line), file) == NULL)
+        {
+            fprintf(stderr, "Error: Not enough lines in file for combination %s\n", exampleLetters);
+            fclose(file);
+            return;
+        }
+        char moveString[256];
+        snprintf(moveString, sizeof(moveString), "Row: %i, Col: %i, Direction: %i, Word: %s, Score: %i",
+             foundMoves[i].row, foundMoves[i].col, foundMoves[i].direction, foundMoves[i].word, foundMoves[i].score);
+
+        // Remove newline character from the line read from the file
+        line[strcspn(line, "\n")] = '\0';
+
+        if (strcmp(line, moveString) != 0)
+        {
+            error = true;
+        }
+    }
+    printf("%s[ %s ]%s Valid Move Test: %s\n",
+        (!error) ? GREEN : RED,
+        (!error) ? "PASSED" : "FAILED",
+        RESET,
+        exampleLetters);
+    
+    fclose(file);
+}
+
+void testSolver(char exampleLetters[])
+{
     char *combinations[MAX_TOTAL_COMBINATIONS];
-    unsigned int totalCombinations;
-
+    unsigned int totalCombinations = 0;
+    
     generateCombinations(exampleLetters, combinations, &totalCombinations);
-
-
-
+    
+    
     Move *foundMoves = malloc(100000 * sizeof(Move));
     Move bestMove;
     if (foundMoves == NULL)
@@ -83,26 +162,43 @@ void testSolver()
         fprintf(stderr, "Memory allocation failed\n");
         exit(1);
     }
-
+    
     int foundCount = 0;
     TrieNode *root = loadDictionary("./dictionary.txt");
-
+    
     Square board[BOARD_SIZE][BOARD_SIZE];
     initBoard(board);
-    loadBoard(board, "./exampleBoard.txt");
+    
+    char filePath[256];
+    char lowerExampleLetters[7];
 
-    //checkValidPlacements(board);
+    strToLower(exampleLetters, lowerExampleLetters);
+    snprintf(filePath, sizeof(filePath), "./solverTests/%s/%sBoard.txt", lowerExampleLetters, lowerExampleLetters);
+
+    //printf("%s\n",filePath);
+    loadBoard(board, filePath);
+
+    
 
     
     findMoves(root, foundMoves, &foundCount, board, combinations, totalCombinations);
     //printFoundMoves(foundMoves, foundCount);
-    //duplicateFinder(foundMoves, foundCount);
-    pickBestMove(foundMoves, foundCount, &bestMove);
+    validateSolver(foundMoves, foundCount, exampleLetters);
 
-    printf("Row: %i, Col: %i, Direction: %i, Word: %s, Score: %i\n", bestMove.row, bestMove.col, bestMove.direction, bestMove.word, bestMove.score);
 
     free(foundMoves);
     freeTrie(root);
+}
+
+void strToLower(const char *src, char *dst)
+{
+    while (*src)
+    {
+        *dst = tolower((unsigned char)*src);
+        src++;
+        dst++;
+    }
+    *dst = '\0';
 }
 
 void printFoundMoves(Move foundMoves[], int totalMovesFound)
