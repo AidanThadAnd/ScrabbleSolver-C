@@ -63,8 +63,11 @@ void testCombinationGenerator()
 
 void testSolver()
 {
-    char exampleLetters[] = {"AEINRST"}; // Leads to the most possible sub words in 7 characters
+    //char exampleLetters[] = {"AEINRST"}; // Leads to the most possible sub words in 7 characters
     //char exampleLetters[] = {"ABCDEFG"}; // Leads to the most possible sub words in 7 characters
+    char exampleLetters[] = {"ASOLUTE"}; //Tests 8 letter word generation for ABSOLUTELY
+    //char exampleLetters[] = {"QUICKBE"}; //Tests 9 letter word generation for ABSOLUTELY
+
     char *combinations[MAX_TOTAL_COMBINATIONS];
     unsigned int totalCombinations;
 
@@ -72,7 +75,7 @@ void testSolver()
 
 
 
-    Move *foundMoves = malloc(1000000000 * sizeof(Move));
+    Move *foundMoves = malloc(100000 * sizeof(Move));
     if (foundMoves == NULL)
     {
         fprintf(stderr, "Memory allocation failed\n");

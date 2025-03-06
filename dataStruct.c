@@ -2,7 +2,7 @@
 
 //Prototypes
 static void changeValidPlacement(Square board[BOARD_SIZE][BOARD_SIZE], int row, int col);
-static void checkValidPlacement(Square board[BOARD_SIZE][BOARD_SIZE]);
+static void checkValidPlacements(Square board[BOARD_SIZE][BOARD_SIZE]);
 
 TrieNode *createTrieNode(char letter){
 
@@ -127,15 +127,12 @@ void loadBoard(Square board[BOARD_SIZE][BOARD_SIZE], const char *filename) {
         for (int col = 0; col < BOARD_SIZE; col++) {
             if (line[col] == '_') {
                 board[row][col].letter = ' '; // Treat '_' as an empty space
-            } else if(line[col] == '%'){
-                board[row][col].letter = ' '; // Treat newline as an empty space
-                board[row][col].validPlacement = true;
             } else {
                 board[row][col].letter = line[col]; // Copy the character from the file
             }
         }
     }
-    checkValidPlacement(board);
+    checkValidPlacements(board);
 
     fclose(file);
 }
@@ -156,7 +153,7 @@ void printBoard(Square board[BOARD_SIZE][BOARD_SIZE]) {
     }
 }
 
-static void checkValidPlacement(Square board[BOARD_SIZE][BOARD_SIZE]){
+static void checkValidPlacements(Square board[BOARD_SIZE][BOARD_SIZE]){
 
     for(int row = 0; row < BOARD_SIZE; row++){
         for(int col = 0; col < BOARD_SIZE; col++){
@@ -164,6 +161,11 @@ static void checkValidPlacement(Square board[BOARD_SIZE][BOARD_SIZE]){
                 changeValidPlacement(board, row, col);
             }
         }
+    }
+
+    //If board is empty, center square is valid
+    if(board[BOARD_SIZE/2][BOARD_SIZE/2].letter == ' '){
+        board[BOARD_SIZE/2][BOARD_SIZE/2].validPlacement = true;
     }
 }
 

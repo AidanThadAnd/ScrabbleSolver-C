@@ -16,23 +16,49 @@ static void dfs(TrieNode *node, char *prefix, int *depth, int x, int y, Square b
         return;
     }
 
-    if(*currentCombinationIndex >= (int)strlen(combinationToTest)){
+    if (*currentCombinationIndex > (int)strlen(combinationToTest))
+    {
         return;
     }
-
-    /*
+    
     if (board[y][x].letter != ' ')
     {
         node = node->children[board[y][x].letter - 'A'];
+        
+        if (node == (TrieNode *)0x45495453414c504f)
+        {
+            return;
+        }
+
         strncat(prefix, &board[y][x].letter, 1);
         *depth += 1;
+        
+        switch (direction)
+        {
+            case UP:
+            y -= 1;
+            break;
+            case DOWN:
+            y += 1;
+            break;
+            case LEFT:
+            x -= 1;
+            break;
+            case RIGHT:
+            x += 1;
+            break;
+        }
     }
-    */
+    if (node == NULL)
+    {
+        return;
+    }
 
-    if (node->isWord && *depth == (int)strlen(combinationToTest) - 1)
+
+    if (node->isWord && *currentCombinationIndex == (int)strlen(combinationToTest))
     {
         Move newMove;
-        
+
         newMove.direction = direction;
         newMove.score = *depth;
         strcpy(newMove.word, prefix);
@@ -46,17 +72,15 @@ static void dfs(TrieNode *node, char *prefix, int *depth, int x, int y, Square b
 
     int childIndex = combinationToTest[*currentCombinationIndex] - 'A';
 
-
     *depth += 1;
     *currentCombinationIndex += 1;
-/*
-if (board[y][x].letter != ' ')
-{
-    }
-    */
 
+    /*
+    if (board[y][x].letter != ' ')
+    {
+        }
+        */
 
-    
     switch (direction)
     {
     case UP:
@@ -78,7 +102,8 @@ if (board[y][x].letter != ' ')
     }
 }
 
-static void findStartingSquare(const int x, const int y, const int direction, const int combinationLength, Move *move){
+static void findStartingSquare(const int x, const int y, const int direction, const int combinationLength, Move *move)
+{
     switch (direction)
     {
     case UP:
@@ -124,7 +149,7 @@ void findMoves(TrieNode *root, Move foundMoves[], int *totalMovesFound, Square b
         {
             for (y = 0; y <= BOARD_SIZE; y++)
             {
-                if(board[y][x].validPlacement)
+                if (board[y][x].validPlacement)
                 {
                     dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, UP, &currentCombinationIndex);
                     resetValues(&depth, prefix, &currentCombinationIndex);
