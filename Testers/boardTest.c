@@ -48,7 +48,6 @@ void initBoard(Square board[BOARD_SIZE][BOARD_SIZE]) {
     for(int i = 0; i < 8; i++){
         board[tripleWord[i][0]][tripleWord[i][1]].bonus = 4;
     }
-
 }
 
 void loadBoard(Square board[BOARD_SIZE][BOARD_SIZE], const char *filename) {
