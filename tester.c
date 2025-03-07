@@ -9,7 +9,7 @@
 #define RED "\033[1;31m"
 #define RESET "\033[0m"
 
-void testSolver(char exampleLetters[]);
+void testSolver(char exampleLetters[], TrieNode *root);
 void strToLower(const char *src, char *dst);
 void validateCombinations(char exampleLetters[], char *combinations[MAX_TOTAL_COMBINATIONS], int totalCombinations);
 void printCombinations(char *combinations[MAX_TOTAL_COMBINATIONS], int totalCombinations);
@@ -25,11 +25,15 @@ int main(int argc, char *argv[])
     (void)argv;
     char testLetters1[] = {"ICKBEAM"}; //Tests 9 letter word generation for QUICKBEAM
     char testLetters2[] = {"ABSOLU"}; //Tests 9 letter word for ABSOLUTER 
+    char testLetters3[] = {"ABCDEFG"}; // Will be used to test empty board
+    TrieNode *root = loadDictionary("./dictionary.txt");
 
     testCombinationGenerator(testLetters1);
     testCombinationGenerator(testLetters2);
-    testSolver(testLetters1);
-    testSolver(testLetters2);
+    testCombinationGenerator(testLetters3);
+    testSolver(testLetters1, root);
+    testSolver(testLetters2, root);
+    testSolver(testLetters3, root);
 }
 
 void printCombinations(char *combinations[MAX_TOTAL_COMBINATIONS], int totalCombinations)
@@ -147,7 +151,7 @@ void validateSolver(Move foundMoves[], int totalMovesFound, char exampleLetters[
     fclose(file);
 }
 
-void testSolver(char exampleLetters[])
+void testSolver(char exampleLetters[], TrieNode *root)
 {
     char *combinations[MAX_TOTAL_COMBINATIONS];
     unsigned int totalCombinations = 0;
@@ -164,7 +168,6 @@ void testSolver(char exampleLetters[])
     }
     
     int foundCount = 0;
-    TrieNode *root = loadDictionary("./dictionary.txt");
     
     Square board[BOARD_SIZE][BOARD_SIZE];
     initBoard(board);
@@ -175,10 +178,7 @@ void testSolver(char exampleLetters[])
     strToLower(exampleLetters, lowerExampleLetters);
     snprintf(filePath, sizeof(filePath), "./solverTests/%s/%sBoard.txt", lowerExampleLetters, lowerExampleLetters);
 
-    //printf("%s\n",filePath);
     loadBoard(board, filePath);
-
-    
 
     
     findMoves(root, foundMoves, &foundCount, board, combinations, totalCombinations);
@@ -187,7 +187,6 @@ void testSolver(char exampleLetters[])
 
 
     free(foundMoves);
-    freeTrie(root);
 }
 
 void strToLower(const char *src, char *dst)
