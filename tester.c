@@ -139,6 +139,8 @@ void validateSolver(Move foundMoves[], int totalMovesFound, char exampleLetters[
 
         if (strcmp(line, moveString) != 0)
         {
+            printf("Expected: %s\n", line);
+            printf("Found: %s\n", moveString);
             error = true;
         }
     }
