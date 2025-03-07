@@ -23,30 +23,30 @@ int main(int argc, char *argv[]) {
 
     char *rack = argv[2];
     size_t rack_len = strlen(rack);
-    char *upper_rack = malloc(rack_len + 1); // Allocate space for uppercase rack
+    char *upper_rack = malloc(rack_len + 1); 
 
     if (upper_rack == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
         return 1;
     }
 
-    // Convert rack to uppercase
+    
     for (size_t i = 0; i < rack_len; i++) {
         upper_rack[i] = toupper(rack[i]);
     }
-    upper_rack[rack_len] = '\0'; // Null-terminate the uppercase string
+    upper_rack[rack_len] = '\0'; 
 
     TrieNode *root = loadDictionary(argv[3]);
 
     if (!root) {
         fprintf(stderr, "Failed to load dictionary.\n");
-        free(upper_rack); // Free allocated memory before exiting
+        free(upper_rack); 
         return 1;
     }
 
     unsigned int totalCombinations = 0;
     char *combinations[MAX_TOTAL_COMBINATIONS];
-    generateCombinations(upper_rack, combinations, &totalCombinations); // Use uppercase rack
+    generateCombinations(upper_rack, combinations, &totalCombinations); 
 
     Move *foundMoves = malloc(100000 * sizeof(Move));
     if (foundMoves == NULL) {
