@@ -9,6 +9,7 @@
 
 #define MAX_CHARACTERS 26 //For our use case with the Trie this represents all letters A-Z
 #define BOARD_SIZE 15
+#define CENTER 7
 
 #define UP 0
 #define DOWN 1
@@ -47,8 +48,6 @@ int searchWord(TrieNode *root, const char *word);
 void printBoard(Square board[BOARD_SIZE][BOARD_SIZE]);
 void loadBoard(Square board[BOARD_SIZE][BOARD_SIZE], const char *filename);
 void initBoard(Square board[BOARD_SIZE][BOARD_SIZE]);
-
-
-
+bool validateBoard(Square board[BOARD_SIZE][BOARD_SIZE]);
 
 #endif

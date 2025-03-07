@@ -160,7 +160,6 @@ void testSolver(char exampleLetters[], TrieNode *root)
     
     
     Move *foundMoves = malloc(100000 * sizeof(Move));
-    Move bestMove;
     if (foundMoves == NULL)
     {
         fprintf(stderr, "Memory allocation failed\n");
