@@ -45,18 +45,9 @@ int main(int argc, char *argv[]) {
 
     findMoves(root, foundMoves, &totalMovesFound, board, combinations, totalCombinations);
 
-    Move bestMove;
+    Move bestMove = pickBestMove(foundMoves, totalMovesFound);
+    printf("Best move: %s, Score: %d\n", bestMove.word, bestMove.score);
 
-    if (totalMovesFound > 0) {
-
-        pickBestMove(foundMoves, totalMovesFound, &bestMove);
-        printf("Best move: %s, Score: %d\n", bestMove.word, bestMove.score);
-
-    } else {
-
-        printf("No valid moves found.\n");
-
-    }
 
     // Free allocated memory for combinations
     for (unsigned int i = 0; i < totalCombinations; i++) {

@@ -253,13 +253,15 @@ void generateCombinations(const char *letters, char *combinations[], unsigned in
     sortArrayAlphabetically(combinations, *totalCombinations);
 }
 
-void pickBestMove(Move foundMoves[], int totalMovesFound, Move *bestMove)
+Move pickBestMove(Move foundMoves[], int totalMovesFound)
 {
+    Move bestMoveFound = foundMoves[0];
     for (int i = 0; i < totalMovesFound; i++)
     {
-        if (foundMoves[i].score > bestMove->score)
+        if (foundMoves[i].score > bestMoveFound.score)
         {
-            *bestMove = foundMoves[i];
+            bestMoveFound = foundMoves[i];
         }
     }
+    return bestMoveFound;
 }
