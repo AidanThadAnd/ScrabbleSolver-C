@@ -16,6 +16,7 @@ static void dfs(TrieNode *head, char *prefix, int *depth, int x, int y, Square b
     {
         return;
     }
+    
     if(*currentCombinationIndex == 0){
         if(direction == UP && board[y+1][x].validPlacement){
             return;
@@ -279,4 +280,41 @@ Move pickBestMove(Move foundMoves[], int totalMovesFound)
         }
     }
     return bestMoveFound;
+}
+
+Move findBestMove(TrieNode *root, Square board[BOARD_SIZE][BOARD_SIZE], char *rack)
+{
+    size_t rack_len = strlen(rack);
+    char *upper_rack = malloc(rack_len + 1); 
+    unsigned int totalCombinations = 0;
+    char *combinations[MAX_TOTAL_COMBINATIONS];
+    int totalMovesFound = 0;
+
+    for (size_t i = 0; i < rack_len; i++) {
+        upper_rack[i] = toupper(rack[i]);
+    }
+    upper_rack[rack_len] = '\0'; 
+
+    generateCombinations(upper_rack, combinations, &totalCombinations); 
+
+    Move *foundMoves = malloc(100000 * sizeof(Move));
+    if (foundMoves == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(upper_rack);
+        freeTrie(root);
+    }
+
+    
+
+    findMoves(root, foundMoves, &totalMovesFound, board, combinations, totalCombinations);
+
+    Move bestMove = pickBestMove(foundMoves, totalMovesFound);
+
+    free(upper_rack);
+    free(foundMoves);
+    for (unsigned int i = 0; i < totalCombinations; i++) {
+        free(combinations[i]);
+    }
+
+    return bestMove;
 }
