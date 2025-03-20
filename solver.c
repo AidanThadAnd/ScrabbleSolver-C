@@ -1,6 +1,8 @@
 #include "solver.h"
 #include <stdbool.h>
 
+
+/* FUNCTION PROTOTYPES*/
 static void findStartingSquare(const int x, const int y, const int direction, const int currentCombinationIndex, Move *move);
 static void reverseString(char *oldString, char *newString);
 static void dfs(TrieNode *head, char *prefix, int *depth, int x, int y, Square board[BOARD_SIZE][BOARD_SIZE], char *combinationToTest, Move foundMoves[], int *totalMovesFound, int direction, int *currentCombinationIndex);
@@ -33,6 +35,9 @@ void findMoves(
 static void swap(char *x, char *y);
 static void permute(char *letters, int left, int right, char *combinations[], unsigned int *totalCombinations);
 static void generateCombinationsRecurse(const char *letters, int totalLetters, char *combination, int start, int index, char *combinations[], unsigned int *totalCombinations);
+
+
+
 
 static void reverseString(char *oldString, char *newString)
 {
@@ -349,7 +354,6 @@ static void sortArrayAlphabetically(char *array[], unsigned int size)
     }
 }
 
-// The only "public" function to generate combinations, did this for the sake of cleaner code in other sections of the codebase
 void generateCombinations(const char *letters, char *combinations[], unsigned int *totalCombinations)
 {
     int totalLetters = strlen(letters);
