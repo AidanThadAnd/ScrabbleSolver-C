@@ -3,8 +3,70 @@
 
 static void findStartingSquare(const int x, const int y, const int direction, const int currentCombinationIndex, Move *move);
 static void reverseString(char *oldString, char *newString);
+static void dfs(TrieNode *head, char *prefix, int *depth, int x, int y, Square board[BOARD_SIZE][BOARD_SIZE], char *combinationToTest, Move foundMoves[], int *totalMovesFound, int direction, int *currentCombinationIndex);
+static void resetValues(int *depth, char *prefix, int *currentCombinationIndex);
+static void findMovesForBoard(
+    TrieNode *root,
+    Move foundMoves[],
+    int *totalMovesFound,
+    Square board[BOARD_SIZE][BOARD_SIZE],
+    char *combination,
+    int x,
+    int y,
+    int *depth,
+    char *prefix,
+    int *currentCombinationIndex);
+static void findMovesForCombination(
+    TrieNode *root,
+    Move foundMoves[],
+    int *totalMovesFound,
+    Square board[BOARD_SIZE][BOARD_SIZE],
+    char *combination,
+    int combinationIndex);
+void findMoves(
+    TrieNode *root,
+    Move foundMoves[],
+    int *totalMovesFound,
+    Square board[BOARD_SIZE][BOARD_SIZE],
+    char *combinationsToTest[],
+    int totalCombinations);
+static void swap(char *x, char *y);
+static void permute(char *letters, int left, int right, char *combinations[], unsigned int *totalCombinations);
+static void generateCombinationsRecurse(const char *letters, int totalLetters, char *combination, int start, int index, char *combinations[], unsigned int *totalCombinations);
 
-// DFS
+static void reverseString(char *oldString, char *newString)
+{
+    int length = strlen(oldString);
+    for (int i = 0; i < length; i++)
+    {
+        newString[i] = oldString[length - i - 1];
+    }
+    newString[length] = '\0';
+}
+
+static void findStartingSquare(const int x, const int y, const int direction, const int combinationLength, Move *move)
+{
+    switch (direction)
+    {
+    case UP:
+        move->row = y + combinationLength;
+        move->col = x;
+        break;
+    case DOWN:
+        move->row = y - combinationLength;
+        move->col = x;
+        break;
+    case LEFT:
+        move->col = x + combinationLength;
+        move->row = y;
+        break;
+    case RIGHT:
+        move->col = x - combinationLength;
+        move->row = y;
+        break;
+    }
+}
+
 static void dfs(TrieNode *head, char *prefix, int *depth, int x, int y, Square board[BOARD_SIZE][BOARD_SIZE], char *combinationToTest, Move foundMoves[], int *totalMovesFound, int direction, int *currentCombinationIndex)
 {
     if (x < 0 || x > BOARD_SIZE || y < 0 || y > BOARD_SIZE)
@@ -110,39 +172,6 @@ static void dfs(TrieNode *head, char *prefix, int *depth, int x, int y, Square b
     }
 }
 
-static void reverseString(char *oldString, char *newString)
-{
-    int length = strlen(oldString);
-    for (int i = 0; i < length; i++)
-    {
-        newString[i] = oldString[length - i - 1];
-    }
-    newString[length] = '\0';
-}
-
-static void findStartingSquare(const int x, const int y, const int direction, const int combinationLength, Move *move)
-{
-    switch (direction)
-    {
-    case UP:
-        move->row = y + combinationLength;
-        move->col = x;
-        break;
-    case DOWN:
-        move->row = y - combinationLength;
-        move->col = x;
-        break;
-    case LEFT:
-        move->col = x + combinationLength;
-        move->row = y;
-        break;
-    case RIGHT:
-        move->col = x - combinationLength;
-        move->row = y;
-        break;
-    }
-}
-
 static void resetValues(int *depth, char *prefix, int *currentCombinationIndex)
 {
     *currentCombinationIndex = 0;
@@ -153,34 +182,83 @@ static void resetValues(int *depth, char *prefix, int *currentCombinationIndex)
     }
 }
 
-void findMoves(TrieNode *root, Move foundMoves[], int *totalMovesFound, Square board[BOARD_SIZE][BOARD_SIZE], char *combinationsToTest[], int totalCombinations)
+static void findMovesForBoard(
+    TrieNode *root,
+    Move foundMoves[],
+    int *totalMovesFound,
+    Square board[BOARD_SIZE][BOARD_SIZE],
+    char *combination,
+    int x,
+    int y,
+    int *depth,
+    char *prefix,
+    int *currentCombinationIndex)
 {
-    for (int i = 0; i < totalCombinations; i++)
+    if (x >= BOARD_SIZE)
     {
-        int currentCombinationIndex = 0;
-        int depth = 0;
-        char prefix[BOARD_SIZE + 1] = "";
-        int x = 0;
-        int y = 0;
-
-        for (x = 0; x < BOARD_SIZE; x++)
-        {
-            for (y = 0; y < BOARD_SIZE; y++)
-            {
-                if (board[y][x].validPlacement)
-                {
-                    dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, UP, &currentCombinationIndex);
-                    resetValues(&depth, prefix, &currentCombinationIndex);
-                    dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, DOWN, &currentCombinationIndex);
-                    resetValues(&depth, prefix, &currentCombinationIndex);
-                    dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, LEFT, &currentCombinationIndex);
-                    resetValues(&depth, prefix, &currentCombinationIndex);
-                    dfs(root, prefix, &depth, x, y, board, combinationsToTest[i], foundMoves, totalMovesFound, RIGHT, &currentCombinationIndex);
-                    resetValues(&depth, prefix, &currentCombinationIndex);
-                }
-            }
-        }
+        return;
     }
+
+    if (y >= BOARD_SIZE)
+    {
+        findMovesForBoard(root, foundMoves, totalMovesFound, board, combination, x + 1, 0, depth, prefix, currentCombinationIndex);
+        return;
+    }
+
+    if (board[y][x].validPlacement)
+    {
+        dfs(root, prefix, depth, x, y, board, combination, foundMoves, totalMovesFound, UP, currentCombinationIndex);
+        resetValues(depth, prefix, currentCombinationIndex);
+
+        dfs(root, prefix, depth, x, y, board, combination, foundMoves, totalMovesFound, DOWN, currentCombinationIndex);
+        resetValues(depth, prefix, currentCombinationIndex);
+
+        dfs(root, prefix, depth, x, y, board, combination, foundMoves, totalMovesFound, LEFT, currentCombinationIndex);
+        resetValues(depth, prefix, currentCombinationIndex);
+
+        dfs(root, prefix, depth, x, y, board, combination, foundMoves, totalMovesFound, RIGHT, currentCombinationIndex);
+        resetValues(depth, prefix, currentCombinationIndex);
+    }
+
+    findMovesForBoard(root, foundMoves, totalMovesFound, board, combination, x, y + 1, depth, prefix, currentCombinationIndex);
+}
+
+static void findMovesForCombination(
+    TrieNode *root,
+    Move foundMoves[],
+    int *totalMovesFound,
+    Square board[BOARD_SIZE][BOARD_SIZE],
+    char *combination,
+    int combinationIndex)
+{
+    if (combinationIndex >= 1) // base case to avoid redundant calls
+    {
+        return;
+    }
+
+    int currentCombinationIndex = 0;
+    int depth = 0;
+    char prefix[BOARD_SIZE + 1] = "";
+    findMovesForBoard(root, foundMoves, totalMovesFound, board, combination, 0, 0, &depth, prefix, &currentCombinationIndex);
+}
+
+void findMoves(
+    TrieNode *root,
+    Move foundMoves[],
+    int *totalMovesFound,
+    Square board[BOARD_SIZE][BOARD_SIZE],
+    char *combinationsToTest[],
+    int totalCombinations)
+{
+    if (totalCombinations <= 0)
+    {
+        return;
+    }
+
+    findMovesForCombination(root, foundMoves, totalMovesFound, board, combinationsToTest[0], 0);
+
+    // Recurse to handle the rest of the combinations
+    findMoves(root, foundMoves, totalMovesFound, board, combinationsToTest + 1, totalCombinations - 1);
 }
 
 // Function to swap two characters
@@ -191,55 +269,67 @@ static void swap(char *x, char *y)
     *y = temp;
 }
 
-// Function to print all permutations of a string
+static void permuteRecursive(char *letters, int left, int right, char *combinations[], unsigned int *totalCombinations, bool used[], int i)
+{
+    if (i > right)
+    {
+        return;
+    }
+
+    unsigned char c = (unsigned char)letters[i];
+    if (!used[c])
+    {
+        used[c] = true;
+        swap(&letters[left], &letters[i]);
+        permute(letters, left + 1, right, combinations, totalCombinations);
+        swap(&letters[left], &letters[i]);
+    }
+
+    permuteRecursive(letters, left, right, combinations, totalCombinations, used, i + 1);
+}
+
 static void permute(char *letters, int left, int right, char *combinations[], unsigned int *totalCombinations)
 {
     if (left == right)
     {
         combinations[*totalCombinations] = malloc(strlen(letters) + 1);
         strcpy(combinations[*totalCombinations], letters);
-        *totalCombinations += 1;
+        (*totalCombinations)++;
+        return;
     }
 
-    else
-    {
-        bool used[256] = {false}; // Optimization to ensure duplicate combinations are not included into the combinations array
-
-        for (int i = left; i <= right; i++)
-        {
-            if (!used[(unsigned char)letters[i]])
-            {
-                used[(unsigned char)letters[i]] = true;
-
-                swap(&letters[left], &letters[i]);
-                permute(letters, left + 1, right, combinations, totalCombinations);
-                swap(&letters[left], &letters[i]);
-            }
-        }
-    }
+    bool used[256] = { false };
+    permuteRecursive(letters, left, right, combinations, totalCombinations, used, left);
 }
 
-// Loose idea as of now, will convert to full recursion at a later time
+static void generateCombinationsRecursive(const char *letters, int totalLetters, char *combination, int i, int index, char *combinations[], unsigned int *totalCombinations, bool used[])
+{
+    if (i >= totalLetters)
+    {
+        return;
+    }
+
+    unsigned char c = (unsigned char)letters[i];
+    if (!used[c])
+    {
+        used[c] = true;
+        combination[index] = letters[i];
+        generateCombinationsRecurse(letters, totalLetters, combination, i + 1, index + 1, combinations, totalCombinations);
+    }
+
+    generateCombinationsRecursive(letters, totalLetters, combination, i + 1, index, combinations, totalCombinations, used);
+}
+
 static void generateCombinationsRecurse(const char *letters, int totalLetters, char *combination, int start, int index, char *combinations[], unsigned int *totalCombinations)
 {
     if (index > 0)
     {
-        combination[index] = '\0';                                           // Null-terminate the combination
-        permute(combination, 0, index - 1, combinations, totalCombinations); // Generate all permutations of the current combination
+        combination[index] = '\0';
+        permute(combination, 0, index - 1, combinations, totalCombinations);
     }
 
-    bool used[256] = {false}; // Optimization to ensure duplicates are not added to combinations array
-
-    for (int i = start; i < totalLetters; i++)
-    {
-        if (!used[(unsigned char)letters[i]])
-        {
-            used[(unsigned char)letters[i]] = true;
-
-            combination[index] = letters[i];
-            generateCombinationsRecurse(letters, totalLetters, combination, i + 1, index + 1, combinations, totalCombinations); // Recurse to generate the next combination
-        }
-    }
+    bool used[256] = { false };
+    generateCombinationsRecursive(letters, totalLetters, combination, start, index, combinations, totalCombinations, used);
 }
 
 // Function to sort an array of strings alphabetically, helpful with optimizing backtracking, current implementation is bubble sort, could switch to quicksort or mergesort if needed
