@@ -1,3 +1,15 @@
+/*---------- ID HEADER -------------------------------------
+/   Author(s):    Aidan Andrews, Kyle Scidmore
+/   File Name:    datastruct.c
+/
+/   File Description:
+/     This file implements functions for managing and manipulating data structures
+/     used in the Scrabble solver, including the Trie for word validation and the 
+/     game board representation. Functions include Trie node creation, word insertion,
+/     Trie freeing, board initialization, loading, validation, and valid placement 
+/     management.
+/
+/---------------------------------------------------------*/
 #include "dataStruct.h"
 
 //Prototypes
@@ -8,6 +20,20 @@ void boardDFS(Square board[BOARD_SIZE][BOARD_SIZE], int row, int col, bool **vis
 bool isBoardConnected(Square board[BOARD_SIZE][BOARD_SIZE]);
 bool isBoardEmpty(Square board[BOARD_SIZE][BOARD_SIZE]);
 
+/*---------- FUNCTION: createTrieNode -----------------------------------
+/   Function Description:
+/     Creates a new TrieNode with the given letter and initializes its children.
+/
+/   Caller Input:
+/     - char letter: The character to be stored in the TrieNode.
+/
+/   Caller Output:
+/     - TrieNode *: Pointer to the newly created TrieNode.
+/       Exits the program if memory allocation fails.
+/
+/   Assumptions, Limitations, Known Bugs:
+/     - Exits the program on allocation failure.
+/---------------------------------------------------------*/
 TrieNode *createTrieNode(char letter){
 
     TrieNode *node = (TrieNode *)malloc(sizeof(TrieNode));
@@ -25,6 +51,20 @@ TrieNode *createTrieNode(char letter){
 
 }
 
+/*---------- FUNCTION: insertWord -----------------------------------
+/   Function Description:
+/     Inserts a word into the Trie data structure.
+/
+/   Caller Input:
+/     - TrieNode *root: Pointer to the root of the Trie.
+/     - const char *word: The word to be inserted.
+/
+/   Caller Output:
+/     - void: No return value.
+/
+/   Assumptions, Limitations, Known Bugs:
+/     - Assumes the word consists of uppercase letters.
+/---------------------------------------------------------*/
 void insertWord(TrieNode *root, const char *word){
 
     TrieNode *current = root;
@@ -42,6 +82,19 @@ void insertWord(TrieNode *root, const char *word){
 
 }
 
+/*---------- FUNCTION: freeTrie -----------------------------------
+/   Function Description:
+/     Recursively frees the memory allocated for the Trie data structure.
+/
+/   Caller Input:
+/     - TrieNode *node: Pointer to the current node in the Trie.
+/
+/   Caller Output:
+/     - void: No return value.
+/
+/   Assumptions, Limitations, Known Bugs:
+/     - N/A
+/---------------------------------------------------------*/
 void freeTrie(TrieNode *node){
 
     if (node == NULL){
@@ -54,7 +107,20 @@ void freeTrie(TrieNode *node){
 
 }
 
-
+/*---------- FUNCTION: searchWord -----------------------------------
+/   Function Description:
+/     Searches for a word in the Trie data structure.
+/
+/   Caller Input:
+/     - TrieNode *root: Pointer to the root of the Trie.
+/     - const char *word: The word to be searched for.
+/
+/   Caller Output:
+/     - int: 1 if the word is found, 0 otherwise.
+/
+/   Assumptions, Limitations, Known Bugs:
+/     - Assumes the word consists of uppercase letters.
+/---------------------------------------------------------*/
 int searchWord(TrieNode *root, const char *word) {
 
     TrieNode *current = root;
@@ -72,8 +138,19 @@ int searchWord(TrieNode *root, const char *word) {
 }
 
 
-
-
+/*---------- FUNCTION: initBoard -----------------------------------
+/   Function Description:
+/     Initializes the game board with empty squares and assigns bonus values.
+/
+/   Caller Input:
+/     - Square board[BOARD_SIZE][BOARD_SIZE]: The game board to be initialized.
+/
+/   Caller Output:
+/     - void: No return value.
+/
+/   Assumptions, Limitations, Known Bugs:
+/     - Uses hardcoded bonus positions.
+/---------------------------------------------------------*/
 void initBoard(Square board[BOARD_SIZE][BOARD_SIZE]) {
 
     // Hardcoded bonus values
@@ -113,6 +190,23 @@ void initBoard(Square board[BOARD_SIZE][BOARD_SIZE]) {
     }
 }
 
+/*---------- FUNCTION: loadBoard -----------------------------------
+/   Function Description:
+/     Loads the game board from a file.
+/
+/   Caller Input:
+/     - Square board[BOARD_SIZE][BOARD_SIZE]: The game board to be loaded.
+/     - const char *filename: The path to the file containing the board layout.
+/
+/   Caller Output:
+/     - void: No return value.
+/
+/   Assumptions, Limitations, Known Bugs:
+/     - Assumes the file contains exactly BOARD_SIZE lines, each with BOARD_SIZE characters.
+/     - Treats '_' in the file as an empty space.
+/     - Exits the program if the file cannot be opened or if the file format is incorrect.
+/     - Calls checkValidPlacements at the end to set valid placement flags.
+/---------------------------------------------------------*/
 void loadBoard(Square board[BOARD_SIZE][BOARD_SIZE], const char *filename) {
 
     FILE *file = fopen(filename, "r");
@@ -142,7 +236,20 @@ void loadBoard(Square board[BOARD_SIZE][BOARD_SIZE], const char *filename) {
 }
 
 
-
+/*---------- FUNCTION: isValidPosition -----------------------------------
+/   Function Description:
+/     Checks if a given row and column are within the bounds of the game board.
+/
+/   Caller Input:
+/     - int row: The row index.
+/     - int col: The column index.
+/
+/   Caller Output:
+/     - bool: True if the position is valid, false otherwise.
+/
+/   Assumptions, Limitations, Known Bugs:
+/     - N/A
+/---------------------------------------------------------*/
 bool isValidPosition(int row, int col) {
 
     // Check if the position is within the board bounds
@@ -150,6 +257,22 @@ bool isValidPosition(int row, int col) {
 
 }
 
+/*---------- FUNCTION: boardDFS -----------------------------------
+/   Function Description:
+/     Performs Depth-First Search on the game board to check connectivity.
+/
+/   Caller Input:
+/     - Square board[BOARD_SIZE][BOARD_SIZE]: The game board.
+/     - int row: The starting row index.
+/     - int col: The starting column index.
+/     - bool **visited: A 2D array to track visited squares.
+/
+/   Caller Output:
+/     - void: No return value.
+/
+/   Assumptions, Limitations, Known Bugs:
+/     - N/A
+/---------------------------------------------------------*/
 void boardDFS(Square board[BOARD_SIZE][BOARD_SIZE], int row, int col, bool **visited) {
 
     // Base cases: out of bounds, already visited, or empty square
@@ -166,6 +289,19 @@ void boardDFS(Square board[BOARD_SIZE][BOARD_SIZE], int row, int col, bool **vis
     boardDFS(board, row, col + 1, visited); // Right
 }
 
+/*---------- FUNCTION: isBoardConnected -----------------------------------
+/   Function Description:
+/     Checks if all non-empty squares on the board are connected.
+/
+/   Caller Input:
+/     - Square board[BOARD_SIZE][BOARD_SIZE]: The game board.
+/
+/   Caller Output:
+/     - bool: True if the board is connected, false otherwise.
+/
+/   Assumptions, Limitations, Known Bugs:
+/     - N/A
+/---------------------------------------------------------*/
 bool isBoardConnected(Square board[BOARD_SIZE][BOARD_SIZE]) {
 
     // Find the first non-empty square to start DFS
@@ -188,7 +324,7 @@ bool isBoardConnected(Square board[BOARD_SIZE][BOARD_SIZE]) {
         return true;
     }
 
-    // Allocate memory for the visited matrix
+    // Allocate memory for the visited array
     bool **visited = (bool **)malloc(BOARD_SIZE * sizeof(bool *));
     for (int i = 0; i < BOARD_SIZE; ++i) {
         visited[i] = (bool *)malloc(BOARD_SIZE * sizeof(bool));
@@ -220,6 +356,19 @@ bool isBoardConnected(Square board[BOARD_SIZE][BOARD_SIZE]) {
     return true; // All non-empty squares are connected
 }
 
+/*---------- FUNCTION: isBoardEmpty -----------------------------------
+/   Function Description:
+/     Checks if the game board is completely empty.
+/
+/   Caller Input:
+/     - Square board[BOARD_SIZE][BOARD_SIZE]: The game board.
+/
+/   Caller Output:
+/     - bool: True if the board is empty, false otherwise.
+/
+/   Assumptions, Limitations, Known Bugs:
+/     - N/A
+/---------------------------------------------------------*/
 bool isBoardEmpty(Square board[BOARD_SIZE][BOARD_SIZE]) {
 
     for (int row = 0; row < BOARD_SIZE; row++) {
@@ -232,6 +381,19 @@ bool isBoardEmpty(Square board[BOARD_SIZE][BOARD_SIZE]) {
     return true;
 }
 
+/*---------- FUNCTION: validateBoard -----------------------------------
+/   Function Description:
+/     Validates the game board, checking for emptiness, center square usage, and connectivity.
+/
+/   Caller Input:
+/     - Square board[BOARD_SIZE][BOARD_SIZE]: The game board.
+/
+/   Caller Output:
+/     - bool: True if the board is valid, false otherwise.
+/
+/   Assumptions, Limitations, Known Bugs:
+/     - N/A
+/---------------------------------------------------------*/
 bool validateBoard(Square board[BOARD_SIZE][BOARD_SIZE]) {
 
     if (isBoardEmpty(board)) {
@@ -251,6 +413,19 @@ bool validateBoard(Square board[BOARD_SIZE][BOARD_SIZE]) {
     return true;
 }
 
+/*---------- FUNCTION: printBoard -----------------------------------
+/   Function Description:
+/     Prints the board to the console.
+/
+/   Caller Input:
+/     - Square board[BOARD_SIZE][BOARD_SIZE]: The board to be printed.
+/
+/   Caller Output:
+/     - void: No return value. Output is printed to the console.
+/
+/   Assumptions, Limitations, Known Bugs:
+/     - Prints empty squares as underscores.
+/---------------------------------------------------------*/
 void printBoard(Square board[BOARD_SIZE][BOARD_SIZE]) {
 
     for (int row = 0; row < BOARD_SIZE; row++) {
@@ -263,6 +438,21 @@ void printBoard(Square board[BOARD_SIZE][BOARD_SIZE]) {
     }
 }
 
+/*---------- FUNCTION: checkValidPlacements -----------------------------------
+/   Function Description:
+/     Determines and marks valid placement positions on the board. 
+/     Valid placements are adjacent to existing tiles or the center square
+/     if the board is empty.
+/
+/   Caller Input:
+/     - Square board[BOARD_SIZE][BOARD_SIZE]: The game board.
+/
+/   Caller Output:
+/     - void: No return value. Modifies the 'validPlacement' field of the board's squares.
+/
+/   Assumptions, Limitations, Known Bugs:
+/     - Uses changeValidPlacement to set individual valid placement flags.
+/---------------------------------------------------------*/
 static void checkValidPlacements(Square board[BOARD_SIZE][BOARD_SIZE]){
 
     for(int row = 0; row < BOARD_SIZE; row++){
@@ -280,6 +470,22 @@ static void checkValidPlacements(Square board[BOARD_SIZE][BOARD_SIZE]){
     }
 }
 
+/*---------- FUNCTION: changeValidPlacement -----------------------------------
+/   Function Description:
+/     Marks adjacent empty squares as valid placement positions,
+/     relative to a given tile on the board.
+/
+/   Caller Input:
+/     - Square board[BOARD_SIZE][BOARD_SIZE]: The game board.
+/     - int row: Row index of the tile.
+/     - int col: Column index of the tile.
+/
+/   Caller Output:
+/     - void: No return value. Modifies the 'validPlacement' field of the board's squares.
+/
+/   Assumptions, Limitations, Known Bugs:
+/     - N/A
+/---------------------------------------------------------*/
 static void changeValidPlacement(Square board[BOARD_SIZE][BOARD_SIZE], int row, int col){
     if(row + 1 < BOARD_SIZE && board[row+1][col].letter == ' '){
         board[row +1][col].validPlacement = true;

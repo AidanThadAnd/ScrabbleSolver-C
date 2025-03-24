@@ -1,3 +1,15 @@
+/*---------- ID HEADER -------------------------------------
+/   Author(s):    Aidan Andrews, Kyle Scidmore
+/   File Name:    datastruct.h
+/
+/   File Description:
+/     This header file defines data structures and function prototypes used in the
+/     Scrabble solver. It includes definitions for the TrieNode (for
+/     word validation), Square (for board representation), and Move (for storing
+/     potential plays). It also declares constants for board dimensions,
+/     directions, and maximum characters.
+/
+/---------------------------------------------------------*/
 #ifndef DATASTRUCT_H
 #define DATASTRUCT_H
 

@@ -1,3 +1,13 @@
+/*---------- ID HEADER -------------------------------------
+/   Author(s):    Aidan Andrews, Kyle Scidmore
+/   File Name:    solver.h
+/
+/   File Description:
+/     This header file declares functions for the main solving logic of the
+/     Scrabble solver. It includes function prototypes for finding valid moves 
+/     on the board, generating letter combinations, and selecting the best move.
+/
+/---------------------------------------------------------*/
 #ifndef SOLVER_H
 #define SOLVER_H
 

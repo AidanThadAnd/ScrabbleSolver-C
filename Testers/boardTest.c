@@ -1,3 +1,13 @@
+/*---------- ID HEADER -------------------------------------
+/   Author(s):    Aidan Andrews, Kyle Scidmore
+/   File Name:    boardTest.c
+/
+/   File Description:
+/     This file is a standalone tester for board validation and loading.
+/     It loads a game board from a specified file, validates the board, 
+/     and prints the board state to the console.
+/
+/---------------------------------------------------------*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

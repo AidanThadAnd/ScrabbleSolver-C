@@ -1,3 +1,15 @@
+/*---------- ID HEADER -------------------------------------
+/   Author(s):    Aidan Andrews, Kyle Scidmore
+/   File Name:    tester.c
+/
+/   File Description:
+/     This file is a comprehensive tester for the Scrabble solver.
+/     It includes functions to test the combination generator and the solver's
+/     move finding logic. It loads a dictionary, sets up test scenarios with
+/     example letters and board configurations, and compares the solver's 
+/     output against expected results.
+/
+/---------------------------------------------------------*/
 #include "io.h"
 #include "dataStruct.h"
 #include "solver.h"
