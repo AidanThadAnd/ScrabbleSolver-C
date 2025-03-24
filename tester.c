@@ -40,9 +40,11 @@ int main(int argc, char *argv[])
     char testLetters3[] = {"ABCDEFG"}; // Will be used to test empty board
     TrieNode *root = loadDictionary("./dictionary.txt");
 
+    
     testCombinationGenerator(testLetters1);
     testCombinationGenerator(testLetters2);
     testCombinationGenerator(testLetters3);
+    
     testSolver(testLetters1, root);
     testSolver(testLetters2, root);
     testSolver(testLetters3, root);
