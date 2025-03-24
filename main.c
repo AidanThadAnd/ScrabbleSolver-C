@@ -1,3 +1,16 @@
+/*---------- ID HEADER -------------------------------------
+/   Author(s):    Aidan Andrews, Kyle Scidmore
+/   File Name:    main.c
+/
+/   File Description:
+/     This file is the main entry point for the Scrabble solver.
+/     It takes a board file, rack letters, and a dictionary file as command-line
+/     arguments. It loads the game board, generates letter combinations from
+/     the rack, finds valid moves using the dictionary, and determines the
+/     best move based on score. It then prints the best move details to the
+/     console.
+/
+/---------------------------------------------------------*/
 #include <stdio.h>
 #include <stdlib.h>
 #include "io.h"

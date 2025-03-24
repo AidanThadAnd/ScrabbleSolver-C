@@ -1,3 +1,15 @@
+/*---------- ID HEADER -------------------------------------
+/   Author(s):    Aidan Andrews, Kyle Scidmore
+/   File Name:    trieNodeTest.c
+/
+/   File Description:
+/     This file is a standalone tester for the Trie data structure implementation.
+/     It includes functions to create Trie nodes, insert words, search for words,
+/     and free Trie memory. The main test function inserts a set of words into
+/     the Trie and then searches for a different set of words, displaying the
+/     results to verify the correct functionality of the Trie.
+/
+/---------------------------------------------------------*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
