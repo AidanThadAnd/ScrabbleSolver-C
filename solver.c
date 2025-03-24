@@ -83,7 +83,7 @@ static void dfs(TrieNode *head, char *prefix, int *depth, int x, int y, Square b
     {
         return;
     }
-    
+
     if(*currentCombinationIndex == 0){
         if(direction == UP && board[y+1][x].validPlacement){
             return;
@@ -98,27 +98,27 @@ static void dfs(TrieNode *head, char *prefix, int *depth, int x, int y, Square b
             return;
         }
     }
+
     
-    
-    while (board[y][x].letter != ' ' && y < BOARD_SIZE && x < BOARD_SIZE) // Small issue with recursion where words at the bounds are returned early due to board[y][x].letter != ' ' returning true when accessing elements outside of the board
+    if (y >= 0 && y < BOARD_SIZE && x >= 0 && x < BOARD_SIZE && board[y][x].letter != ' ')
     {
         strncat(prefix, &board[y][x].letter, 1);
-        *depth += 1;
+        (*depth)++;
 
         switch (direction)
         {
         case UP:
-            y -= 1;
-            break;
+            dfs(head, prefix, depth, x, y - 1, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex);
+            return;
         case DOWN:
-            y += 1;
-            break;
+            dfs(head, prefix, depth, x, y + 1, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex);
+            return;
         case LEFT:
-            x -= 1;
-            break;
+            dfs(head, prefix, depth, x - 1, y, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex);
+            return;
         case RIGHT:
-            x += 1;
-            break;
+            dfs(head, prefix, depth, x + 1, y, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex);
+            return;
         }
     }
 
