@@ -390,6 +390,23 @@ static void swap(char *x, char *y)
 }
 
 
+/*---------- FUNCTION: permuteRecursive -----------------------------------
+/   Function Description:
+/     Recursively generates unique permutations of a set of characters by
+/     swapping and tracking used characters.
+/   Caller Input:
+/     - char *letters: The string of letters to permute.
+/     - int left: The current left boundary of the permutation range.
+/     - int right: The right boundary of the permutation range.
+/     - char *combinations[]: Array to store generated permutations.
+/     - unsigned int *totalCombinations: Pointer to the total permutations found.
+/     - bool used[]: Tracks which characters have been used to avoid duplicates.
+/     - int i: The current index being evaluated.
+/   Caller Output:
+/     - void: Updates 'combinations' and 'totalCombinations'.
+/   Assumptions, Limitations, Known Bugs:
+/     - N/A
+/---------------------------------------------------------*/
 static void permuteRecursive(char *letters, int left, int right, char *combinations[], unsigned int *totalCombinations, bool used[], int i)
 {
     if (i > right)
@@ -442,6 +459,25 @@ static void permute(char *letters, int left, int right, char *combinations[], un
     permuteRecursive(letters, left, right, combinations, totalCombinations, used, left);
 }
 
+
+/*---------- FUNCTION: generateCombinationsRecursive -----------------------------------
+/   Function Description:
+/     Recursively explores possible subsets of the input letters, adding them
+/     to the combination buffer and generating permutations.
+/   Caller Input:
+/     - const char *letters: The input letters.
+/     - int totalLetters: Total number of letters.
+/     - char *combination: Buffer for the current combination.
+/     - int i: Current index within the letters.
+/     - int index: Current length of the combination.
+/     - char *combinations[]: Array to store generated combinations.
+/     - unsigned int *totalCombinations: Pointer to track the total combinations.
+/     - bool used[]: Tracks used characters to avoid duplicates.
+/   Caller Output:
+/     - void: Updates 'combinations' and 'totalCombinations'.
+/   Assumptions, Limitations, Known Bugs:
+/     - N/A
+/---------------------------------------------------------*/
 static void generateCombinationsRecursive(const char *letters, int totalLetters, char *combination, int i, int index, char *combinations[], unsigned int *totalCombinations, bool used[])
 {
     if (i >= totalLetters)
@@ -563,10 +599,16 @@ void generateCombinations(const char *letters, char *combinations[], unsigned in
 /     - Move: The Move structure with the highest score.
 /
 /   Assumptions, Limitations, Known Bugs:
-/     - Assumes the 'foundMoves' array contains at least one Move.
+/     - N/A
 /---------------------------------------------------------*/
 Move pickBestMove(Move foundMoves[], int totalMovesFound)
 {
+    if (totalMovesFound <= 0)
+    {
+        Move emptyMove = {0, 0, 0, " ", 0};
+        return emptyMove;
+    }
+
     Move bestMoveFound = foundMoves[0];
     for (int i = 0; i < totalMovesFound; i++)
     {
@@ -575,6 +617,10 @@ Move pickBestMove(Move foundMoves[], int totalMovesFound)
             bestMoveFound = foundMoves[i];
         }
     }
+    // Adjust row and column to be 1-indexed
+    bestMoveFound.col += 1;
+    bestMoveFound.row += 1;
+
     return bestMoveFound;
 }
 

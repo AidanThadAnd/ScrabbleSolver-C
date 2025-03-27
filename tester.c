@@ -31,10 +31,8 @@ void printFoundMoves(Move foundMoves[], int totalMovesFound);
 void duplicateFinder(Move foundMoves[], int totalMovesFound);
 void checkValidPlacements(Square board[BOARD_SIZE][BOARD_SIZE]);
 
-int main(int argc, char *argv[])
+int main()
 {
-    (void)argc; // Temporaily suppress compiler warning
-    (void)argv;
     char testLetters1[] = {"ICKBEAM"}; //Tests 9 letter word generation for QUICKBEAM
     char testLetters2[] = {"ABSOLU"}; //Tests 9 letter word for ABSOLUTER 
     char testLetters3[] = {"ABCDEFG"}; // Will be used to test empty board

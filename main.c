@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
     }
 
     Move bestMove = findBestMove(root, board, rack);
-    printf("Best move: %s, Score: %d, Row: %d, Column:%d", bestMove.word, bestMove.score, bestMove.row, bestMove.col);
+    printf("Best move: %s, Score: %d, Row: %d, Column:%d \n", bestMove.word, bestMove.score, bestMove.row, bestMove.col);
 
     freeTrie(root);
     return 0;
