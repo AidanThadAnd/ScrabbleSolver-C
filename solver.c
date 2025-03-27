@@ -624,6 +624,19 @@ Move pickBestMove(Move foundMoves[], int totalMovesFound)
     return bestMoveFound;
 }
 
+/*---------- FUNCTION: findBestMove -----------------------------------
+/   Function Description:
+/     Finds the best possible move by generating all valid moves for the given rack
+/     and selecting the move with the highest score.
+/   Caller Input:
+/     - TrieNode *root: Pointer to the Trie used for word validation.
+/     - Square board[BOARD_SIZE][BOARD_SIZE]: The game board.
+/     - char *rack: The letters the player has.
+/   Caller Output:
+/     - Move: The highest-scoring move.
+/   Assumptions, Limitations, Known Bugs:
+/     - N/A
+/---------------------------------------------------------*/
 Move findBestMove(TrieNode *root, Square board[BOARD_SIZE][BOARD_SIZE], char *rack)
 {
     size_t rack_len = strlen(rack);
