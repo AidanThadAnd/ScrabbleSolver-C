@@ -19,14 +19,15 @@ This program has the following slightly different rules to the official scrabble
 make all
 ```
 
-This will create two programs
+This will create 5 programs
 
-- main
-  - Tester programs:
-  - solverAlgTest
-  - trieNodeTester
-  - boardTester
-  - dictionaryTester
+1. main
+
+- Tester programs:
+  2. solverAlgTest
+  3. trieNodeTester
+  4. boardTester
+  5. dictionaryTester
 
 ### Running the programs
 
