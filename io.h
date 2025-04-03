@@ -19,5 +19,8 @@
 
 
 TrieNode *loadDictionary(const char *filename);
+void printBestMove(Move bestMove, char *rack, Square board[BOARD_SIZE][BOARD_SIZE]);
+char* findTilePlacements(Square board[BOARD_SIZE][BOARD_SIZE], char* usedLetters, Move bestMove);
+void findUsedLetters(char *usedLetters, const char *word, char *rack);
 
 #endif

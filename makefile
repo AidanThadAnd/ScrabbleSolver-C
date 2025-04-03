@@ -31,7 +31,7 @@ all: clean main test
 
 # Build MAIN executable (uses MAIN.o + common objects)
 main: $(COMMON_OBJS) $(MAIN_OBJS)
-	$(CC) $(CFLAGS) -o main $(COMMON_OBJS) $(MAIN_OBJS)
+	$(CC) $(CFLAGS) -o scrableSolver $(COMMON_OBJS) $(MAIN_OBJS)
 
 # Build Solver tester executable
 solverTester: $(COMMON_OBJS) $(SOLVER_TESTER_OBJS)
@@ -56,4 +56,4 @@ test: solverTester boardTester dictionaryTester trieNodeTester
 
 # Clean up
 clean:
-	rm -f *.o main solverTester ./Testers/*.o boardTester dictionaryTester trieNodeTester
+	rm -f *.o main ./Testers/*.o boardTester dictionaryTester trieNodeTester solverTester

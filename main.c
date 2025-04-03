@@ -17,8 +17,6 @@
 #include "dataStruct.h"
 #include "solver.h"
 
-static void printBestMove(Move bestMove);
-
 int main(int argc, char *argv[]) {
     if (argc < 4) {
         fprintf(stderr, "Usage: %s <board_file> <rack_letters> <dictionary_file>\n", argv[0]);
@@ -42,28 +40,9 @@ int main(int argc, char *argv[]) {
     }
 
     Move bestMove = findBestMove(root, board, rack);
-    printBestMove(bestMove);
+    printBestMove(bestMove, rack, board);
     
     freeTrie(root);
     return 0;
 }
 
-static void printBestMove(Move bestMove) {
-    printf("Best move: %s, Score: %d, Row: %d, Column:%d,", bestMove.word, bestMove.score, bestMove.row, bestMove.col);
-    switch (bestMove.direction) {
-        case UP:
-            printf(" Direction: UP\n");
-            break;
-        case DOWN:
-            printf(" Direction: DOWN\n");
-            break;
-        case LEFT:
-            printf(" Direction: LEFT\n");
-            break;
-        case RIGHT:
-            printf(" Direction: RIGHT\n");
-            break;
-        default:
-            printf(" Invalid direction\n");
-    }
-}
