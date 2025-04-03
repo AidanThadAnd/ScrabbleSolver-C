@@ -9,9 +9,10 @@ This program has the following slightly different rules to the official scrabble
 1. No individual letter points, all letters are worth 1 point
 2. No additional points by achieving a BINGO (Placing 7-letters in a turn)
 
-## Built with
+## Technologies used
 
 - **C**
+  - No additional libraries outside the c standard library are utilized
 
 ## Building the program
 
