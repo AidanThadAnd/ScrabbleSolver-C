@@ -61,3 +61,4 @@ boardTester
 .gitignore
 solverTester
 trieNodeTester
+dictionaryTester
