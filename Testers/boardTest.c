@@ -87,7 +87,7 @@ void loadBoard(Square board[BOARD_SIZE][BOARD_SIZE], const char *filename) {
     fclose(file);
 }
 
-bool isValidPosition(Square board[BOARD_SIZE][BOARD_SIZE], int row, int col) {
+bool isValidPosition(int row, int col) {
 
     // Check if the position is within the board bounds
     return (row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE);
@@ -210,8 +210,11 @@ void printBoard(Square board[BOARD_SIZE][BOARD_SIZE]) {
 int main(int argc, char *argv[]) {
 
     if (argc < 2) {
+        printf("Usage: %s <board_file>\n", argv[0]);
         return 1;
     }
+
+    
 
     Square board[BOARD_SIZE][BOARD_SIZE];
     initBoard(board);

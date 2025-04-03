@@ -96,13 +96,13 @@ void testTrie() {
     const char *testWords[] = {"APPLE", "MANGO", "PEACH", "GRAPES", "BANANA"};
 
     // Insert words into Trie
-    for (int i = 0; i < sizeof(words) / sizeof(words[0]); i++) {
+    for (size_t i = 0; i < sizeof(words) / sizeof(words[0]); i++) {
         insertWord(root, words[i]);
     }
 
     // Search for words in Trie
     printf("Word Search Results:\n");
-    for (int i = 0; i < sizeof(testWords) / sizeof(testWords[0]); i++) {
+    for (size_t i = 0; i < sizeof(testWords) / sizeof(testWords[0]); i++) {
         printf("Searching for '%s': %s\n", testWords[i], searchWord(root, testWords[i]) ? "FOUND" : "NOT FOUND");
     }
 
