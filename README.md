@@ -51,16 +51,12 @@ For testing purposes there are 2 different types of tester executables
 
 1. Black-Box test (solverTester)
 
-- Tests the code hollistically as it requires all code ranging from IO, Trie navigation, dictionary loading, board loading and finally solving for all the moves
+- Tests the code holistically as it requires all code ranging from IO, Trie navigation, dictionary loading, board loading and solving for moves.
+
+- This program will utilize various input rack's and their known corresponding combinations
+  - It will compare the algoirthms combinations to the known combinations, outputting sucess/failure to the output
+- The program will then utilize a Board, Dictionary, and Input to create all the possible moves and compare it to a known file with all the possible moves
 
 2. White-box Tests (boardTester, dictionaryTester, trieNodeTester)
 
-- Tests individual functions indepdenet of all other non-essential code
-
-### Running of Black-Box test
-
-- Build the file "solverAlgTest"
-- Run "solverAlgTest"
-  - This program will utilize various input rack's and their known corresponding combinations
-    - It will compare the algoirthms combinations to the known combinations, outputting sucess/failure to the output
-  - The program will then utilize a Board, Dictionary, and Input to create all the possible moves and compare it to a known file with all the possible moves
+- Tests individual functions independent of all other non-essential code
