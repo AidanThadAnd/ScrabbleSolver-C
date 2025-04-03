@@ -21,13 +21,13 @@ make all
 
 This will create 5 programs
 
-1. main
+- main
 
 - Tester programs:
-  2. solverAlgTest
-  3. trieNodeTester
-  4. boardTester
-  5. dictionaryTester
+  - solverAlgTest
+  - trieNodeTester
+  - boardTester
+  - dictionaryTester
 
 ### Running the programs
 
