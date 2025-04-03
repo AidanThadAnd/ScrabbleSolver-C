@@ -169,6 +169,7 @@ void initBoard(Square board[BOARD_SIZE][BOARD_SIZE]) {
             board[row][col].letter = ' ';
             board[row][col].bonus = 0;
             board[row][col].validPlacement = false;
+            board[row][col].usedBonus = false;
         }
     }
 

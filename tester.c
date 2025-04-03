@@ -169,6 +169,7 @@ void testSolver(char exampleLetters[], TrieNode *root)
 {
     char *combinations[MAX_TOTAL_COMBINATIONS];
     unsigned int totalCombinations = 0;
+    int bonus[5] = {0};
     
     generateCombinations(exampleLetters, combinations, &totalCombinations);
     
@@ -194,8 +195,8 @@ void testSolver(char exampleLetters[], TrieNode *root)
     loadBoard(board, filePath);
 
     
-    findMoves(root, foundMoves, &foundCount, board, combinations, totalCombinations);
-    //printFoundMoves(foundMoves, foundCount);
+    findMoves(root, foundMoves, &foundCount, board, combinations, totalCombinations, bonus);
+
     validateSolver(foundMoves, foundCount, exampleLetters);
 
 

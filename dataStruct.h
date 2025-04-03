@@ -38,8 +38,10 @@ typedef struct TrieNode {
 // Board Square Structure
 typedef struct Square {
     char letter;            // The letter on this square (' ' for empty).
+    int direction;          // Direction of the word (0: UP, 1: DOWN, 2: Left, 3: Right).
     int bonus;             // Bonus type for this square (0: None, 1: Double Letter, 2: Triple Letter, 3: Double Word, 4: Triple Word).
     bool validPlacement;   // Flag indicating if a letter can be placed on this square.
+    bool usedBonus;        // Flag indicating if the bonus has been used. (Used to remove squares used by the input board)
 } Square;
 
 // Move Structure to store potential plays
