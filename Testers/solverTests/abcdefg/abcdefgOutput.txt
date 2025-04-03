@@ -280,6 +280,10 @@ Row: 7, Col: 7, Direction: 2, Word: FAE, Score: 3
 Row: 7, Col: 7, Direction: 3, Word: FAE, Score: 3
 Row: 3, Col: 7, Direction: 0, Word: DEAF, Score: 5
 Row: 7, Col: 3, Direction: 2, Word: DEAF, Score: 5
+Row: 7, Col: 7, Direction: 0, Word: FAG, Score: 3
+Row: 7, Col: 7, Direction: 1, Word: FAG, Score: 3
+Row: 7, Col: 7, Direction: 2, Word: FAG, Score: 3
+Row: 7, Col: 7, Direction: 3, Word: FAG, Score: 3
 Row: 5, Col: 7, Direction: 0, Word: EF, Score: 2
 Row: 7, Col: 7, Direction: 1, Word: FE, Score: 2
 Row: 7, Col: 5, Direction: 2, Word: EF, Score: 2
@@ -318,6 +322,8 @@ Row: 7, Col: 7, Direction: 0, Word: GAED, Score: 5
 Row: 7, Col: 7, Direction: 1, Word: GAED, Score: 5
 Row: 7, Col: 7, Direction: 2, Word: GAED, Score: 5
 Row: 7, Col: 7, Direction: 3, Word: GAED, Score: 5
+Row: 4, Col: 7, Direction: 0, Word: FAG, Score: 3
+Row: 7, Col: 4, Direction: 2, Word: FAG, Score: 3
 Row: 4, Col: 7, Direction: 0, Word: BEG, Score: 3
 Row: 7, Col: 4, Direction: 2, Word: BEG, Score: 3
 Row: 4, Col: 7, Direction: 0, Word: DEG, Score: 3

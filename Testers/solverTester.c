@@ -10,9 +10,9 @@
 /     output against expected results.
 /
 /---------------------------------------------------------*/
-#include "io.h"
-#include "dataStruct.h"
-#include "solver.h"
+#include "../io.h"
+#include "../dataStruct.h"
+#include "../solver.h"
 #include <stdio.h>
 
 #define MAX_TOTAL_COMBINATIONS 150000 // Highest amount of total combinations possible with 7 pieces in the players Hand
@@ -36,7 +36,7 @@ int main()
     char testLetters1[] = {"ICKBEAM"}; //Tests 9 letter word generation for QUICKBEAM
     char testLetters2[] = {"ABSOLU"}; //Tests 9 letter word for ABSOLUTER 
     char testLetters3[] = {"ABCDEFG"}; // Will be used to test empty board
-    TrieNode *root = loadDictionary("./dictionary.txt");
+    TrieNode *root = loadDictionary("Testers/dictionary.txt");
 
     
     testCombinationGenerator(testLetters1);
@@ -83,7 +83,7 @@ void validateCombinations(char exampleLetters[], char *combinations[MAX_TOTAL_CO
 {
     bool error = false;
     char filePath[256];
-    snprintf(filePath, sizeof(filePath), "./solverTests/%s/%sCombinations.txt", exampleLetters, exampleLetters);
+    snprintf(filePath, sizeof(filePath), "Testers/solverTests/%s/%sCombinations.txt", exampleLetters, exampleLetters);
     FILE *file = fopen(filePath, "r");
     if (file == NULL)
     {
@@ -124,7 +124,7 @@ void validateSolver(Move foundMoves[], int totalMovesFound, char exampleLetters[
 {
     bool error = false;
     char filePath[256];
-    snprintf(filePath, sizeof(filePath), "./solverTests/%s/%sOutput.txt", exampleLetters, exampleLetters);
+    snprintf(filePath, sizeof(filePath), "Testers/solverTests/%s/%sOutput.txt", exampleLetters, exampleLetters);
     FILE *file = fopen(filePath, "r");
     if (file == NULL)
     {
@@ -190,13 +190,13 @@ void testSolver(char exampleLetters[], TrieNode *root)
     char lowerExampleLetters[7];
 
     strToLower(exampleLetters, lowerExampleLetters);
-    snprintf(filePath, sizeof(filePath), "./solverTests/%s/%sBoard.txt", lowerExampleLetters, lowerExampleLetters);
+    snprintf(filePath, sizeof(filePath), "Testers/solverTests/%s/%sBoard.txt", lowerExampleLetters, lowerExampleLetters);
 
     loadBoard(board, filePath);
 
     
     findMoves(root, foundMoves, &foundCount, board, combinations, totalCombinations, bonus);
-
+    //printFoundMoves(foundMoves, foundCount);
     validateSolver(foundMoves, foundCount, exampleLetters);
 
 

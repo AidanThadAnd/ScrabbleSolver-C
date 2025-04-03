@@ -9,7 +9,7 @@ COMMON_OBJS = $(COMMON_SRCS:.c=.o)
 MAIN_SRCS = main.c
 MAIN_OBJS = $(MAIN_SRCS:.c=.o)
 
-TESTER_SRCS = tester.c
+TESTER_SRCS = Testers/solverTester.c
 TESTER_OBJS = $(TESTER_SRCS:.c=.o)
 
 # Targets
@@ -21,7 +21,7 @@ main: $(COMMON_OBJS) $(MAIN_OBJS)
 
 # Build tester executable (uses tester.o + common objects, but NOT MAIN.o)
 tester: $(COMMON_OBJS) $(TESTER_OBJS)
-	$(CC) $(CFLAGS) -o tester $(COMMON_OBJS) $(TESTER_OBJS)
+	$(CC) $(CFLAGS) -o solverTester $(COMMON_OBJS) $(TESTER_OBJS)
 
 # Compile .c files to .o files
 %.o: %.c
@@ -29,4 +29,4 @@ tester: $(COMMON_OBJS) $(TESTER_OBJS)
 
 # Clean up
 clean:
-	rm -f *.o main tester
+	rm -f *.o main solverTester ./Testers/*.o
