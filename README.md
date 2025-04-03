@@ -38,7 +38,12 @@ This will create 5 programs
 ./main {boardFile} {inputRack} {dictionaryFile}
 ```
 
-- solverAlgTest takes no arguments
+- solverAlgTest/trieNodeTester take no arguments
+- boardTester/dictionaryTester take one argument in the syntax
+
+```bash
+tester {boardStateFile/dictionaryFile}
+```
 
 ## Testing plan
 
@@ -51,12 +56,6 @@ For testing purposes there are 2 different types of tester executables
 2. White-box Tests (boardTester, dictionaryTester, trieNodeTester)
 
 - Tests individual functions indepdenet of all other non-essential code
-- trieNodeTester does not take an arguments
-- boardTester/dictionaryTester both take 1 argument in the syntax
-
-```bash
-tester {boardStateFile/dictionaryFile}
-```
 
 ### Running of Black-Box test
 
