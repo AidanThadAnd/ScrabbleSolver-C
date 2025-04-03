@@ -53,7 +53,7 @@ For testing purposes there are 2 different types of tester executables
 - boardTester/dictionaryTester both take 1 argument in the syntax
 
 ```bash
-boardTester/dictionaryTester {boardStateFile/dictionaryFile}
+tester {boardStateFile/dictionaryFile}
 ```
 
 ### Running of Black-Box test
