@@ -42,6 +42,7 @@ typedef struct Square {
     int bonus;             // Bonus type for this square (0: None, 1: Double Letter, 2: Triple Letter, 3: Double Word, 4: Triple Word).
     bool validPlacement;   // Flag indicating if a letter can be placed on this square.
     bool usedBonus;        // Flag indicating if the bonus has been used. (Used to remove squares used by the input board)
+
 } Square;
 
 // Move Structure to store potential plays
@@ -51,6 +52,7 @@ typedef struct Move {
     int direction;          // Direction of the word (0: Horizontal, 1: Vertical).
     char word[BOARD_SIZE+1];// The word being played. (Extra space for null terminator)
     int score;              // Score of the play.
+    bool isReversed;        // If the word is a reverse of a combination then this is set to true
 } Move;
 
 // Function prototypes

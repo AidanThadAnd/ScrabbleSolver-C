@@ -17,8 +17,8 @@
 /* FUNCTION PROTOTYPES*/
 static void findStartingSquare(const int x, const int y, const int direction, const int currentCombinationIndex, Move *move);
 static void reverseString(char *oldString, char *newString);
-static void dfs(TrieNode *head, char *prefix, int *depth, int x, int y, Square board[BOARD_SIZE][BOARD_SIZE], char *combinationToTest, Move foundMoves[], int *totalMovesFound, int direction, int *currentCombinationIndex, int bonus[5]);
-static void resetValues(int *depth, char *prefix, int *currentCombinationIndex, int bonus[5]);
+static void dfs(TrieNode *head, char *prefix, int *depth, int x, int y, Square board[BOARD_SIZE][BOARD_SIZE], char *combinationToTest, Move foundMoves[], int *totalMovesFound, int direction, int *currentCombinationIndex);
+static void resetValues(int *depth, char *prefix, int *currentCombinationIndex);
 static void findMovesForBoard(
     TrieNode *root,
     Move foundMoves[],
@@ -29,29 +29,29 @@ static void findMovesForBoard(
     int y,
     int *depth,
     char *prefix,
-    int *currentCombinationIndex,
-    int bonus[5]);
+    int *currentCombinationIndex
+    );
 static void findMovesForCombination(
     TrieNode *root,
     Move foundMoves[],
     int *totalMovesFound,
     Square board[BOARD_SIZE][BOARD_SIZE],
     char *combination,
-    int combinationIndex,
-    int bonus[5]);
+    int combinationIndex
+    );
 void findMoves(
     TrieNode *root,
     Move foundMoves[],
     int *totalMovesFound,
     Square board[BOARD_SIZE][BOARD_SIZE],
     char *combinationsToTest[],
-    int totalCombinations,
-    int bonus[5]);
+    int totalCombinations
+    );
 static void swap(char *x, char *y);
 static void permute(char *letters, int left, int right, char *combinations[], unsigned int *totalCombinations);
 static void generateCombinationsRecurse(const char *letters, int totalLetters, char *combination, int start, int index, char *combinations[], unsigned int *totalCombinations);
-static void checkForBonus(int x, int y, Square board[BOARD_SIZE][BOARD_SIZE], int bonus[5]);
-static void calculateScore(int totalSquaresUsed, int bonus[5], Move *move);
+static void calculateScore(Move *move, Square board[BOARD_SIZE][BOARD_SIZE], int rackLettersUsed);
+
 
 
 /*---------- FUNCTION: dfs -----------------------------------
@@ -77,7 +77,7 @@ static void calculateScore(int totalSquaresUsed, int bonus[5], Move *move);
 /   Assumptions, Limitations, Known Bugs:
 /     - N/A
 /---------------------------------------------------------*/
-static void dfs(TrieNode *head, char *prefix, int *depth, int x, int y, Square board[BOARD_SIZE][BOARD_SIZE], char *combinationToTest, Move foundMoves[], int *totalMovesFound, int direction, int *currentCombinationIndex, int bonus[5])
+static void dfs(TrieNode *head, char *prefix, int *depth, int x, int y, Square board[BOARD_SIZE][BOARD_SIZE], char *combinationToTest, Move foundMoves[], int *totalMovesFound, int direction, int *currentCombinationIndex)
 {
     if (x < 0 || x > BOARD_SIZE || y < 0 || y > BOARD_SIZE)
     {
@@ -88,8 +88,6 @@ static void dfs(TrieNode *head, char *prefix, int *depth, int x, int y, Square b
     {
         return;
     }
-
-    checkForBonus(x, y, board, bonus);
 
     if(*currentCombinationIndex == 0){
         if(direction == UP && board[y+1][x].validPlacement){
@@ -117,16 +115,16 @@ static void dfs(TrieNode *head, char *prefix, int *depth, int x, int y, Square b
         switch (direction)
         {
         case UP:
-            dfs(head, prefix, depth, x, y - 1, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex, bonus);
+            dfs(head, prefix, depth, x, y - 1, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex);
             return;
         case DOWN:
-            dfs(head, prefix, depth, x, y + 1, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex, bonus);
+            dfs(head, prefix, depth, x, y + 1, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex);
             return;
         case LEFT:
-            dfs(head, prefix, depth, x - 1, y, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex, bonus);
+            dfs(head, prefix, depth, x - 1, y, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex);
             return;
         case RIGHT:
-            dfs(head, prefix, depth, x + 1, y, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex, bonus);
+            dfs(head, prefix, depth, x + 1, y, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex);
             return;
         }
     }
@@ -141,25 +139,50 @@ static void dfs(TrieNode *head, char *prefix, int *depth, int x, int y, Square b
     }
 
 
+
     //Check if the prefix is a valid word & if the entire combination is used
-    if ((reversePrefixIsWord || searchWord(head, prefix)) && *currentCombinationIndex == (int)strlen(combinationToTest))
+    if (((reversePrefixIsWord && (direction == UP || direction == LEFT)) || (searchWord(head, prefix) && (direction == RIGHT || direction == DOWN))) 
+        && (*currentCombinationIndex == (int)strlen(combinationToTest)))
     {
         Move newMove;
 
         newMove.direction = direction;
 
-        calculateScore(*depth, bonus, &newMove);
-
+        
         if(reversePrefixIsWord){
             strcpy(newMove.word, reversePrefix);
             newMove.row = y;
             newMove.col = x;
+            newMove.isReversed = true;
+
             
         } else {
-        strcpy(newMove.word, prefix);
-        findStartingSquare(x, y, direction, *depth, &newMove);
+            strcpy(newMove.word, prefix);
+            findStartingSquare(x, y, direction, *depth, &newMove);
+            
         }
         newMove.direction = direction;
+
+        calculateScore(&newMove, board, *currentCombinationIndex);
+
+
+         if(newMove.isReversed){
+             switch(direction){
+                 case UP:
+                     newMove.direction = DOWN;
+                 break;
+                 case DOWN:
+                     newMove.direction = UP;
+                 break;
+                 case LEFT:
+                     newMove.direction = RIGHT;
+                 break;
+                 case RIGHT:
+                     newMove.direction = LEFT;
+                 break;
+             }
+         }
+
         foundMoves[*totalMovesFound] = newMove;
         *totalMovesFound += 1;
         }
@@ -174,23 +197,23 @@ static void dfs(TrieNode *head, char *prefix, int *depth, int x, int y, Square b
     switch (direction)
     {
     case UP:
-        dfs(head, prefix, depth, x, y - 1, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex, bonus);
+        dfs(head, prefix, depth, x, y - 1, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex);
 
         break;
     case DOWN:
-        dfs(head, prefix, depth, x, y + 1, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex, bonus);
+        dfs(head, prefix, depth, x, y + 1, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex);
 
         break;
     case LEFT:
-        dfs(head, prefix, depth, x - 1, y, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex, bonus);
+        dfs(head, prefix, depth, x - 1, y, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex);
 
         break;
     case RIGHT:
-        dfs(head, prefix, depth, x + 1, y, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex, bonus);
+        dfs(head, prefix, depth, x + 1, y, board, combinationToTest, foundMoves, totalMovesFound, direction, currentCombinationIndex);
 
         break;
     }
-}
+} 
 
 
 /*---------- FUNCTION: calculateScore -----------------------------------
@@ -199,7 +222,7 @@ static void dfs(TrieNode *head, char *prefix, int *depth, int x, int y, Square b
 /
 /   Caller Input:
 /     - int totalSquaresUsed: The number of squares used in the move.
-/     - int bonus[5]: Array containing the number of each type of bonus (Double Letter, Triple Letter, Double Word, Triple Word).
+/     - in[5]: Array containing the number of each type o (Double Letter, Triple Letter, Double Word, Triple Word).
 /
 /     - Move *move: Pointer to the Move structure where the score will be stored.
 /
@@ -209,62 +232,74 @@ static void dfs(TrieNode *head, char *prefix, int *depth, int x, int y, Square b
 /   Assumptions, Limitations, Known Bugs:
 /     - N/A
 /---------------------------------------------------------*/
-static void calculateScore(int totalSquaresUsed, int bonus[5], Move *move)
+static void calculateScore(Move *move, Square board[BOARD_SIZE][BOARD_SIZE], int rackLettersUsed)
 {
-    int score = totalSquaresUsed;
+    int letterScores[26] = {
+        1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 
+        5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 
+        1, 4, 4, 8, 4, 10
+    };
 
-    //Note: Letter bonuses are applied before word bonus multipliers
-    for (int i = 0; i < 5; i++)
+    int totalScore = 0;
+    int wordMultiplier = 1;
+
+    for (unsigned long i = 0; i < strlen(move->word); i++)
     {
-        if (bonus[i] > 0)
+        int row = move->row;
+        int col = move->col;
+
+        switch (move->direction)
         {
-            
-            switch (i)
+            case UP:
+            row -= i;
+            break;
+            case DOWN:
+            row += i;
+            break;
+            case LEFT:
+            col -= i;
+            break;
+            case RIGHT:
+            col += i;
+            break;
+        }
+
+        char c = move->word[i];
+
+        if (c >= 'A' && c <= 'Z')
+        {
+            int letterScore = letterScores[c - 'A'];
+            // Apply double/triple letter bonuses
+            if (board[row][col].bonus == 1 && !board[row][col].usedBonus) // Double Letter
             {
-            case 1: // Double Letter
-                score += bonus[i];
-                break;
-            case 2: // Triple Letter
-                score += bonus[i] * 2;
-                break;
-            case 3: // Double Word
-                score *= 2;
-                break;
-            case 4: // Triple Word
-                score *= 3;
-                break;
+                letterScore *= 2;
+            }
+            else if (board[row][col].bonus == 2 && !board[row][col].usedBonus) // Triple Letter
+            {
+                letterScore *= 3;
+            }
+            totalScore += letterScore;
+
+            // Apply double/triple word multipliers
+            if (board[row][col].bonus == 3 && !board[row][col].usedBonus) // Double Word
+            {
+                wordMultiplier *= 2;
+            }
+            else if (board[row][col].bonus == 4 && !board[row][col].usedBonus) // Triple Word
+            {
+                wordMultiplier *= 3;
             }
         }
+
     }
-    move->score = score;
+
+    if (rackLettersUsed == 7)
+    {
+        totalScore += 50; // Bing for using all 7 letters
+    }
+    move->score = totalScore * wordMultiplier;
 }
 
-/*---------- FUNCTION: checkForBonus -----------------------------------
-/   Function Description:
-/     Checks if a square on the board has a bonus and updates the bonus array accordingly.
-/
-/   Caller Input:
-/     - int x: The column index of the square.
-/     - int y: The row index of the square.
-/     - Square board[BOARD_SIZE][BOARD_SIZE]: The game board.
-/     - int bonus[5]: Array to track the number of each type of bonus.
-/
-/   Caller Output:
-/     - void: No return value. Updates the bonus array directly.
-/
-/   Assumptions, Limitations, Known Bugs:
-/       - Assumes board[y][x] is a valid square on the board.
-/       - Assumes bonus is an array of size 5 to track different types of bonuses.
-/---------------------------------------------------------*/
-static void checkForBonus(int x, int y, Square board[BOARD_SIZE][BOARD_SIZE], int bonus[5])
-{
-    for (int i = 0; i < 5; i++)
-    {
-        if(board[y][x].bonus == i && !board[y][x].usedBonus){
-            bonus[i]++;
-        }
-    }
-}
 
 /*---------- FUNCTION: reverseString -----------------------------------
 /   Function Description:
@@ -301,8 +336,8 @@ static void findMovesForBoard(
     int y,
     int *depth,
     char *prefix,
-    int *currentCombinationIndex,
-    int bonus[5])
+    int *currentCombinationIndex
+    )
 {
     if (x >= BOARD_SIZE)
     {
@@ -311,26 +346,26 @@ static void findMovesForBoard(
 
     if (y >= BOARD_SIZE)
     {
-        findMovesForBoard(root, foundMoves, totalMovesFound, board, combination, x + 1, 0, depth, prefix, currentCombinationIndex, bonus);
+        findMovesForBoard(root, foundMoves, totalMovesFound, board, combination, x + 1, 0, depth, prefix, currentCombinationIndex);
         return;
     }
 
     if (board[y][x].validPlacement)
     {
-        dfs(root, prefix, depth, x, y, board, combination, foundMoves, totalMovesFound, UP, currentCombinationIndex, bonus);
-        resetValues(depth, prefix, currentCombinationIndex, bonus);
+        dfs(root, prefix, depth, x, y, board, combination, foundMoves, totalMovesFound, UP, currentCombinationIndex);
+        resetValues(depth, prefix, currentCombinationIndex);
 
-        dfs(root, prefix, depth, x, y, board, combination, foundMoves, totalMovesFound, DOWN, currentCombinationIndex, bonus);
-        resetValues(depth, prefix, currentCombinationIndex, bonus);
+        dfs(root, prefix, depth, x, y, board, combination, foundMoves, totalMovesFound, DOWN, currentCombinationIndex);
+        resetValues(depth, prefix, currentCombinationIndex);
 
-        dfs(root, prefix, depth, x, y, board, combination, foundMoves, totalMovesFound, LEFT, currentCombinationIndex, bonus);
-        resetValues(depth, prefix, currentCombinationIndex, bonus);
+        dfs(root, prefix, depth, x, y, board, combination, foundMoves, totalMovesFound, LEFT, currentCombinationIndex);
+        resetValues(depth, prefix, currentCombinationIndex);
 
-        dfs(root, prefix, depth, x, y, board, combination, foundMoves, totalMovesFound, RIGHT, currentCombinationIndex, bonus);
-        resetValues(depth, prefix, currentCombinationIndex, bonus);
+        dfs(root, prefix, depth, x, y, board, combination, foundMoves, totalMovesFound, RIGHT, currentCombinationIndex);
+        resetValues(depth, prefix, currentCombinationIndex);
     }
 
-    findMovesForBoard(root, foundMoves, totalMovesFound, board, combination, x, y + 1, depth, prefix, currentCombinationIndex, bonus);
+    findMovesForBoard(root, foundMoves, totalMovesFound, board, combination, x, y + 1, depth, prefix, currentCombinationIndex);
 }
 /*---------- FUNCTION: findStartingSquare -----------------------------------
 /   Function Description:
@@ -364,11 +399,11 @@ static void findStartingSquare(const int x, const int y, const int direction, co
         move->col = x;
         break;
     case LEFT:
-        move->col = x + combinationLength;
+        move->col = x + combinationLength + 1;
         move->row = y;
         break;
     case RIGHT:
-        move->col = x - combinationLength;
+        move->col = x - combinationLength - 1;
         move->row = y;
         break;
     }
@@ -400,8 +435,8 @@ static void findMovesForCombination(
     int *totalMovesFound,
     Square board[BOARD_SIZE][BOARD_SIZE],
     char *combination,
-    int combinationIndex,
-    int bonus[5])
+    int combinationIndex
+    )
 {
     if (combinationIndex >= 1) // base case to avoid redundant calls
     {
@@ -411,7 +446,7 @@ static void findMovesForCombination(
     int currentCombinationIndex = 0;
     int depth = 0;
     char prefix[BOARD_SIZE + 1] = "";
-    findMovesForBoard(root, foundMoves, totalMovesFound, board, combination, 0, 0, &depth, prefix, &currentCombinationIndex, bonus);
+    findMovesForBoard(root, foundMoves, totalMovesFound, board, combination, 0, 0, &depth, prefix, &currentCombinationIndex);
 }
 /*---------- FUNCTION: resetValues -----------------------------------
 /   Function Description:
@@ -428,17 +463,13 @@ static void findMovesForCombination(
 /   Assumptions, Limitations, Known Bugs:
 /     - Assumes prefix has enough allocated memory.
 /---------------------------------------------------------*/
-static void resetValues(int *depth, char *prefix, int *currentCombinationIndex, int bonus[5])
+static void resetValues(int *depth, char *prefix, int *currentCombinationIndex)
 {
     *currentCombinationIndex = 0;
     *depth = 0;
     for (int i = 0; i < BOARD_SIZE + 1; i++)
     {
         prefix[i] = '\0';
-    }
-    for (int i = 0; i < 5; i++)
-    {
-        bonus[i] = 0;
     }
 }
 
@@ -468,18 +499,18 @@ void findMoves(
     int *totalMovesFound,
     Square board[BOARD_SIZE][BOARD_SIZE],
     char *combinationsToTest[],
-    int totalCombinations,
-    int bonus[5])
+    int totalCombinations
+    )
 {
     if (totalCombinations <= 0)
     {
         return;
     }
 
-    findMovesForCombination(root, foundMoves, totalMovesFound, board, combinationsToTest[0], 0, bonus);
+    findMovesForCombination(root, foundMoves, totalMovesFound, board, combinationsToTest[0], 0);
 
     // Recurse to handle the rest of the combinations
-    findMoves(root, foundMoves, totalMovesFound, board, combinationsToTest + 1, totalCombinations - 1, bonus);
+    findMoves(root, foundMoves, totalMovesFound, board, combinationsToTest + 1, totalCombinations - 1);
 }
 
 /*---------- FUNCTION: swap -----------------------------------
@@ -719,7 +750,7 @@ Move pickBestMove(Move foundMoves[], int totalMovesFound)
 {
     if (totalMovesFound <= 0)
     {
-        Move emptyMove = {0, 0, 0, " ", 0};
+        Move emptyMove = {0, 0, 0, " ", 0, false};
         return emptyMove;
     }
 
@@ -732,8 +763,6 @@ Move pickBestMove(Move foundMoves[], int totalMovesFound)
         }
     }
     // Adjust row and column to be 1-indexed
-    bestMoveFound.col += 1;
-    bestMoveFound.row += 1;
 
     return bestMoveFound;
 }
@@ -758,7 +787,7 @@ Move findBestMove(TrieNode *root, Square board[BOARD_SIZE][BOARD_SIZE], char *ra
     unsigned int totalCombinations = 0;
     char *combinations[MAX_TOTAL_COMBINATIONS];
     int totalMovesFound = 0;
-    int bonus[5] = {0};
+
 
     for (size_t i = 0; i < rack_len; i++) {
         upper_rack[i] = toupper(rack[i]);
@@ -776,7 +805,7 @@ Move findBestMove(TrieNode *root, Square board[BOARD_SIZE][BOARD_SIZE], char *ra
 
     
 
-    findMoves(root, foundMoves, &totalMovesFound, board, combinations, totalCombinations, bonus);
+    findMoves(root, foundMoves, &totalMovesFound, board, combinations, totalCombinations);
 
     Move bestMove = pickBestMove(foundMoves, totalMovesFound);
 

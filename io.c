@@ -59,7 +59,7 @@ void printBestMove(Move bestMove, char *rack, Square board[BOARD_SIZE][BOARD_SIZ
     findUsedLetters(usedLetters, bestMove.word, rack);
     char *placements = findTilePlacements(board, usedLetters, bestMove);
 
-    printf("Word: %s\nRack Letters Used: %s\nPosition: (%d,%d)\n", bestMove.word, usedLetters, bestMove.row, bestMove.col);
+    printf("Word: %s\nRack Letters Used: %s\nPosition: (%d,%d)\n", bestMove.word, usedLetters, bestMove.row+1, bestMove.col+1);
 
     switch (bestMove.direction) {
         case UP:
@@ -93,7 +93,6 @@ void printBestMove(Move bestMove, char *rack, Square board[BOARD_SIZE][BOARD_SIZ
 
 
 char* findTilePlacements(Square board[BOARD_SIZE][BOARD_SIZE], char* usedLetters, Move bestMove) {
-    // Dynamically allocate memory for the result string
     char *placements = (char *)malloc(1024 * sizeof(char));
     if (!placements) {
         fprintf(stderr, "Memory allocation failed in findTilePlacements\n");
@@ -101,63 +100,76 @@ char* findTilePlacements(Square board[BOARD_SIZE][BOARD_SIZE], char* usedLetters
     }
     memset(placements, 0, 1024);
 
-    int row = bestMove.row - 1;
-    int col = bestMove.col - 1;
-    int direction = bestMove.direction;
-    int i = 0;
+    int currentRow;
+    int currentCol;
 
-    while ((unsigned long)i < strlen(usedLetters)) {
-        switch (direction) {
-            case UP: {
-                if (board[row - i][col].letter == ' ') {
-                    // Place the letter on the board
-                    board[row - i][col].letter = usedLetters[i];
-                    char temp[128];
-                    sprintf(temp, "  Row: %d, Col: %d, Char: %c\n",
-                            (row - i + 1), (col + 1), usedLetters[i]);
-                    strcat(placements, temp);
-                }
-                break;
-            }
-            case DOWN: {
-                if (board[row + i][col].letter == ' ') {
-                    // Place the letter on the board
-                    board[row + i][col].letter = usedLetters[i];
-                    char temp[128];
-                    sprintf(temp, "  Row: %d, Col: %d, Char: %c\n",
-                            (row + i + 1), (col + 1), usedLetters[i]);
-                    strcat(placements, temp);
-                }
-                break;
-            }
-            case LEFT: {
-                if (board[row][col - i].letter == ' ') {
-                    // Place the letter on the board
-                    board[row][col - i].letter = usedLetters[i];
-                    char temp[128];
-                    sprintf(temp, "  Row: %d, Col: %d, Char: %c\n",
-                            (row + 1), (col - i + 1), usedLetters[i]);
-                    strcat(placements, temp);
-                }
-                break;
-            }
-            case RIGHT: {
-                if (board[row][col + i].letter == ' ') {
-                    // Place the letter on the board
-                    board[row][col + i].letter = usedLetters[i];
-                    char temp[128];
-                    sprintf(temp, "  Row: %d, Col: %d, Char: %c\n",
-                            (row + 1), (col + i + 1), usedLetters[i]);
-                    strcat(placements, temp);
-                }
-                break;
-            }
+    if(bestMove.isReversed){
+        switch(bestMove.direction){
+            case(RIGHT):
+                currentRow = bestMove.row;
+                currentCol = bestMove.col + 1;
+            break;
+            case(LEFT):
+                currentRow = bestMove.row;
+                currentCol = bestMove.col - 1;
+            break;
+            case(UP):
+                currentRow = bestMove.row + 1;
+                currentCol = bestMove.col;
+            break;
+            case(DOWN):
+                currentRow = bestMove.row - 1;
+                currentCol = bestMove.col;
+            break;
             default:
                 fprintf(stderr, "Invalid direction\n");
                 free(placements);
                 return NULL;
         }
-        i++;
+    }
+     else{
+        currentRow = bestMove.row;
+        currentCol = bestMove.col;
+    }
+    int direction = bestMove.direction;
+    int letterIndex = 0; // Tracks which letter of usedLetters we're on
+
+    while (letterIndex < (int)strlen(usedLetters)) {
+        // Out-of-bounds check
+        if (currentRow < 0 || currentRow >= BOARD_SIZE ||
+            currentCol < 0 || currentCol >= BOARD_SIZE) {
+            break;
+        }
+
+        // If this square is empty, place the next letter
+        if (board[currentRow][currentCol].letter == ' ') {
+            board[currentRow][currentCol].letter = usedLetters[letterIndex];
+            char temp[128];
+            sprintf(temp, "  Row: %d, Col: %d, Char: %c\n",
+                    currentRow + 1, currentCol + 1, usedLetters[letterIndex]);
+            strcat(placements, temp);
+            letterIndex++;
+        }
+
+        // Move to the next square in the specified direction
+        switch (direction) {
+            case UP:
+                currentRow--;
+                break;
+            case DOWN:
+                currentRow++;
+                break;
+            case LEFT:
+                currentCol--;
+                break;
+            case RIGHT:
+                currentCol++;
+                break;
+            default:
+                fprintf(stderr, "Invalid direction\n");
+                free(placements);
+                return NULL;
+        }
     }
     return placements;
 }

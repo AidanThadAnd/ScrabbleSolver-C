@@ -23,7 +23,7 @@
 
 
 //The following functions are only included in the header to enable easier testing in tester.c
-void findMoves(TrieNode *root, Move foundMoves[], int *totalMovesFound, Square board[BOARD_SIZE][BOARD_SIZE], char *combinationsToTest[], int totalCombinations, int bonus[5]);
+void findMoves(TrieNode *root, Move foundMoves[], int *totalMovesFound, Square board[BOARD_SIZE][BOARD_SIZE], char *combinationsToTest[], int totalCombinations);
 void generateCombinations(const char *letters, char *combinations[], unsigned int *totalCombinations);
 Move pickBestMove(Move foundMoves[], int totalMovesFound);
 
