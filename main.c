@@ -17,10 +17,8 @@
 #include "dataStruct.h"
 #include "solver.h"
 
-int main(int argc, char *argv[])
-{
-    if (argc < 4)
-    {
+int main(int argc, char *argv[]){
+    if (argc < 4){
         fprintf(stderr, "Usage: %s <board_file> <rack_letters> <dictionary_file>\n", argv[0]);
         return 1;
     }
@@ -31,14 +29,12 @@ int main(int argc, char *argv[])
     initBoard(board);
     loadBoard(board, argv[1]);
 
-    if (!validateBoard(board))
-    {
+    if (!validateBoard(board)){
         printf("Board validation failed!\n");
         return 1;
     }
 
-    if (!root)
-    {
+    if (!root){
         fprintf(stderr, "Failed to load dictionary.\n");
         return 1;
     }

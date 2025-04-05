@@ -11,7 +11,6 @@
 /---------------------------------------------------------*/
 #include "solver.h"
 
-
 /* FUNCTION PROTOTYPES*/
 static void findStartingSquare(const int x, const int y, const int direction, const int currentCombinationIndex, Move *move);
 static void reverseString(char *oldString, char *newString);
@@ -289,7 +288,6 @@ static void calculateScore(Move *move, Square board[BOARD_SIZE][BOARD_SIZE], int
         }
     }
 
-
     if (rackLettersUsed == 7)
     {
         totalScore += 50; // Bing for using all 7 letters
@@ -493,6 +491,7 @@ void findMoves(
     char *combinationsToTest[],
     int totalCombinations)
 {
+
     if (totalCombinations <= 0)
     {
         return;
@@ -746,7 +745,6 @@ Move pickBestMove(Move foundMoves[], int totalMovesFound)
             bestMoveFound = foundMoves[i];
         }
     }
-
 
     return bestMoveFound;
 }
