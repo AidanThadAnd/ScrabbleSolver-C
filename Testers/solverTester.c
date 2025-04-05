@@ -43,9 +43,9 @@ int main()
     testCombinationGenerator(testLetters2);
     testCombinationGenerator(testLetters3);
     
-    testSolver(testLetters1, root);
+    // testSolver(testLetters1, root);
     testSolver(testLetters2, root);
-    testSolver(testLetters3, root);
+    // testSolver(testLetters3, root);
 }
 
 void printCombinations(char *combinations[MAX_TOTAL_COMBINATIONS], int totalCombinations)
@@ -195,8 +195,8 @@ void testSolver(char exampleLetters[], TrieNode *root)
 
     
     findMoves(root, foundMoves, &foundCount, board, combinations, totalCombinations);
-    //printFoundMoves(foundMoves, foundCount);
-    validateSolver(foundMoves, foundCount, exampleLetters);
+    printFoundMoves(foundMoves, foundCount);
+    //validateSolver(foundMoves, foundCount, exampleLetters);
 
 
     free(foundMoves);

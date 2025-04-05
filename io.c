@@ -118,7 +118,7 @@ char* findTilePlacements(Square board[BOARD_SIZE][BOARD_SIZE], char* usedLetters
                 currentCol = bestMove.col;
             break;
             case(DOWN):
-                currentRow = bestMove.row - 1;
+                currentRow = bestMove.row;
                 currentCol = bestMove.col;
             break;
             default:

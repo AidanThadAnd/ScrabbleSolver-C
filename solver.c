@@ -79,7 +79,7 @@ static void calculateScore(Move *move, Square board[BOARD_SIZE][BOARD_SIZE], int
 /---------------------------------------------------------*/
 static void dfs(TrieNode *head, char *prefix, int *depth, int x, int y, Square board[BOARD_SIZE][BOARD_SIZE], char *combinationToTest, Move foundMoves[], int *totalMovesFound, int direction, int *currentCombinationIndex)
 {
-    if (x < 0 || x > BOARD_SIZE || y < 0 || y > BOARD_SIZE)
+    if (x < 0 || x >= BOARD_SIZE || y < 0 || y >= BOARD_SIZE)
     {
         return;
     }
@@ -110,7 +110,7 @@ static void dfs(TrieNode *head, char *prefix, int *depth, int x, int y, Square b
         strncat(prefix, &board[y][x].letter, 1);
         (*depth)++;
 
-
+        
 
         switch (direction)
         {
@@ -129,27 +129,28 @@ static void dfs(TrieNode *head, char *prefix, int *depth, int x, int y, Square b
         }
     }
 
+    // Instead of checking if (prefix) is a valid word first, add the next letter now:
+    strncat(prefix, &combinationToTest[*currentCombinationIndex], 1);
+    (*depth)++;
+    (*currentCombinationIndex)++;
+
     char *reversePrefix = malloc(strlen(prefix) + 1);
     reverseString(prefix, reversePrefix);
+    printf("Prefix: %s\n", reversePrefix);
 
     int reversePrefixIsWord = 0;
-    
-    if(direction == UP || direction == LEFT){
+    if (direction == UP || direction == LEFT) {
         reversePrefixIsWord = searchWord(head, reversePrefix);
     }
 
-
-
-    //Check if the prefix is a valid word & if the entire combination is used
-    if (((reversePrefixIsWord && (direction == UP || direction == LEFT)) || (searchWord(head, prefix) && (direction == RIGHT || direction == DOWN))) 
-        && (*currentCombinationIndex == (int)strlen(combinationToTest)))
-    {
+    if ((reversePrefixIsWord || searchWord(head, prefix)) && (*currentCombinationIndex == (int)strlen(combinationToTest))) {
         Move newMove;
 
         newMove.direction = direction;
 
         
         if(reversePrefixIsWord){
+
             strcpy(newMove.word, reversePrefix);
             newMove.row = y;
             newMove.col = x;
@@ -164,34 +165,28 @@ static void dfs(TrieNode *head, char *prefix, int *depth, int x, int y, Square b
         newMove.direction = direction;
 
         calculateScore(&newMove, board, *currentCombinationIndex);
-
-
-         if(newMove.isReversed){
-             switch(direction){
-                 case UP:
-                     newMove.direction = DOWN;
-                 break;
-                 case DOWN:
-                     newMove.direction = UP;
-                 break;
-                 case LEFT:
-                     newMove.direction = RIGHT;
-                 break;
-                 case RIGHT:
-                     newMove.direction = LEFT;
-                 break;
-             }
-         }
+        
+        if(newMove.isReversed){
+            switch(direction){
+                case UP:
+                newMove.direction = DOWN;
+                break;
+                case DOWN:
+                newMove.direction = UP;
+                break;
+                case LEFT:
+                newMove.direction = RIGHT;
+                break;
+                case RIGHT:
+                newMove.direction = LEFT;
+                break;
+            }
+        }
 
         foundMoves[*totalMovesFound] = newMove;
         *totalMovesFound += 1;
-        }
-    
+    }
 
-    strncat(prefix, &combinationToTest[*currentCombinationIndex], 1);
-
-    *depth += 1;
-    *currentCombinationIndex += 1;
     free(reversePrefix);
 
     switch (direction)
@@ -234,6 +229,7 @@ static void dfs(TrieNode *head, char *prefix, int *depth, int x, int y, Square b
 /---------------------------------------------------------*/
 static void calculateScore(Move *move, Square board[BOARD_SIZE][BOARD_SIZE], int rackLettersUsed)
 {
+
     int letterScores[26] = {
         1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 
         5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 
@@ -242,6 +238,8 @@ static void calculateScore(Move *move, Square board[BOARD_SIZE][BOARD_SIZE], int
 
     int totalScore = 0;
     int wordMultiplier = 1;
+    
+
 
     for (unsigned long i = 0; i < strlen(move->word); i++)
     {
@@ -292,11 +290,15 @@ static void calculateScore(Move *move, Square board[BOARD_SIZE][BOARD_SIZE], int
         }
 
     }
-
+    //racLettersUsed is array indexed, so we need to add 1 to it
     if (rackLettersUsed == 7)
     {
         totalScore += 50; // Bing for using all 7 letters
     }
+      if (strcmp(move->word, "ABSOLUTE") == 0)
+      {
+          printf("Points for %s: %d, Starting at: (%d,%d), Rack letters used: %d\n", move->word, totalScore, move->row, move->col, rackLettersUsed);
+      }
     move->score = totalScore * wordMultiplier;
 }
 
