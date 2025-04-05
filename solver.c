@@ -10,8 +10,7 @@
 /
 /---------------------------------------------------------*/
 #include "solver.h"
-#include <stdbool.h>
-#include <stdio.h>
+
 
 /* FUNCTION PROTOTYPES*/
 static void findStartingSquare(const int x, const int y, const int direction, const int currentCombinationIndex, Move *move);
@@ -289,7 +288,8 @@ static void calculateScore(Move *move, Square board[BOARD_SIZE][BOARD_SIZE], int
             }
         }
     }
-    // racLettersUsed is array indexed, so we need to add 1 to it
+
+
     if (rackLettersUsed == 7)
     {
         totalScore += 50; // Bing for using all 7 letters
@@ -746,7 +746,7 @@ Move pickBestMove(Move foundMoves[], int totalMovesFound)
             bestMoveFound = foundMoves[i];
         }
     }
-    // Adjust row and column to be 1-indexed
+
 
     return bestMoveFound;
 }

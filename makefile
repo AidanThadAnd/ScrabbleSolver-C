@@ -44,7 +44,7 @@ dictionaryTester: $(DICTIONARY_TESTER_OBJS)
 	$(CC) $(CFLAGS) -o dictionaryTester $(COMMON_OBJS) $(DICTIONARY_TESTER_OBJS)
 
 trieNodeTester: $(TRIE_NODE_TESTER_OBJS)
-	$(CC) $(CFLAGS) -o trieNodeTester $(TRIE_NODE_TESTER_OBJS)
+	$(CC) $(CFLAGS) -o trieNodeTester $(COMMON_OBJS) $(TRIE_NODE_TESTER_OBJS)
 
 # Build all test executables
 test: solverTester boardTester dictionaryTester trieNodeTester

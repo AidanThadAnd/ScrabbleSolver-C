@@ -33,10 +33,10 @@ void checkValidPlacements(Square board[BOARD_SIZE][BOARD_SIZE]);
 
 int main()
 {
-    char testLetters1[] = {"ICKBEAM"}; // Tests 9 letter word generation for QUICKBEAM
-    char testLetters2[] = {"ABSOLU"};  // Tests 9 letter word for ABSOLUTER
-    char testLetters3[] = {"ABCDEFG"}; // Will be used to test empty board
-    TrieNode *root = loadDictionary("Testers/dictionary.txt");
+    char testLetters1[] = {"ICKBEAM"}; 
+    char testLetters2[] = {"ABSOLU"};  
+    char testLetters3[] = {"ABCDEFG"}; 
+    TrieNode *root = loadDictionary("Testers/solverTests/dictionary.txt");
 
     testCombinationGenerator(testLetters1);
     testCombinationGenerator(testLetters2);
@@ -190,10 +190,6 @@ void testSolver(char exampleLetters[], TrieNode *root)
     loadBoard(board, filePath);
 
     findMoves(root, foundMoves, &foundCount, board, combinations, totalCombinations);
-
-    // Move bestMove = findBestMove(root, board, exampleLetters);
-    // printFoundMoves(foundMoves, foundCount);
-    // printBestMove(bestMove, exampleLetters, board);
 
     validateSolver(foundMoves, foundCount, exampleLetters);
 
