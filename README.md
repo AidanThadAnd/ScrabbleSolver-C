@@ -38,11 +38,11 @@ This will create 5 programs
 ./main {boardFile} {inputRack} {dictionaryFile}
 ```
 
-- solverAlgTest/trieNodeTester take no arguments
-- boardTester/dictionaryTester take one argument in the syntax
+- solverAlgTest/trieNodeTester/dictionaryTester take no arguments
+- boardTester takes one argument in the syntax
 
 ```bash
-tester {boardStateFile/dictionaryFile}
+./boardTester {boardFile}
 ```
 
 ## Testing plan

@@ -3,7 +3,7 @@
 /   File Name:    io.c
 /
 /   File Description:
-/     This file implements functions for loading a Scrabble dictionary 
+/     This file implements functions for loading a Scrabble dictionary
 /     from a file into a Trie data structure for word lookup.
 /
 /---------------------------------------------------------*/
@@ -27,10 +27,12 @@
 /     - Exits the program if the file cannot be opened.
 /
 -------------------------------------------------------------------------*/
-TrieNode *loadDictionary(const char *filename){
+TrieNode *loadDictionary(const char *filename)
+{
 
     FILE *file = fopen(filename, "r");
-    if (file == NULL){
+    if (file == NULL)
+    {
         perror("Failed to open dictionary file");
         exit(1);
     }
@@ -38,9 +40,11 @@ TrieNode *loadDictionary(const char *filename){
     TrieNode *root = createTrieNode('\0');
     char word[16];
 
-    while ( fscanf(file, "%15s", word) != EOF){
+    while (fscanf(file, "%15s", word) != EOF)
+    {
 
-        for(int i = 0; word[i]; i++){
+        for (int i = 0; word[i]; i++)
+        {
             word[i] = toupper(word[i]);
         }
 
@@ -49,38 +53,41 @@ TrieNode *loadDictionary(const char *filename){
 
     fclose(file);
     return root;
-
 }
 
-
-void printBestMove(Move bestMove, char *rack, Square board[BOARD_SIZE][BOARD_SIZE]) {
+void printBestMove(Move bestMove, char *rack, Square board[BOARD_SIZE][BOARD_SIZE])
+{
 
     char usedLetters[BOARD_SIZE] = {0};
     findUsedLetters(usedLetters, bestMove.word, rack);
     char *placements = findTilePlacements(board, usedLetters, bestMove);
 
-    printf("Word: %s\nRack Letters Used: %s\nPosition: (%d,%d)\n", bestMove.word, usedLetters, bestMove.row+1, bestMove.col+1);
+    printf("Word: %s\nRack Letters Used: %s\nPosition: (%d,%d)\n", bestMove.word, usedLetters, bestMove.row + 1, bestMove.col + 1);
 
-    switch (bestMove.direction) {
-        case UP:
-            printf("Direction: UP\n");
-            break;
-        case DOWN:
-            printf("Direction: DOWN\n");
-            break;
-        case LEFT:
-            printf("Direction: LEFT\n");
-            break;
-        case RIGHT:
-            printf("Direction: RIGHT\n");
-            break;
-        default:
-            printf(" Invalid direction\n");
+    switch (bestMove.direction)
+    {
+    case UP:
+        printf("Direction: UP\n");
+        break;
+    case DOWN:
+        printf("Direction: DOWN\n");
+        break;
+    case LEFT:
+        printf("Direction: LEFT\n");
+        break;
+    case RIGHT:
+        printf("Direction: RIGHT\n");
+        break;
+    default:
+        printf(" Invalid direction\n");
     }
     printf("Tile Placements:\n");
-    if (strlen(placements) > 0) {
+    if (strlen(placements) > 0)
+    {
         printf("%s", placements);
-    } else {
+    }
+    else
+    {
         printf("No tile placements found.\n");
     }
     printf("Score: %d\n", bestMove.score);
@@ -91,10 +98,11 @@ void printBestMove(Move bestMove, char *rack, Square board[BOARD_SIZE][BOARD_SIZ
     placements = NULL;
 }
 
-
-char* findTilePlacements(Square board[BOARD_SIZE][BOARD_SIZE], char* usedLetters, Move bestMove) {
+char *findTilePlacements(Square board[BOARD_SIZE][BOARD_SIZE], char *usedLetters, Move bestMove)
+{
     char *placements = (char *)malloc(1024 * sizeof(char));
-    if (!placements) {
+    if (!placements)
+    {
         fprintf(stderr, "Memory allocation failed in findTilePlacements\n");
         return NULL;
     }
@@ -103,46 +111,52 @@ char* findTilePlacements(Square board[BOARD_SIZE][BOARD_SIZE], char* usedLetters
     int currentRow;
     int currentCol;
 
-    if(bestMove.isReversed){
-        switch(bestMove.direction){
-            case(RIGHT):
-                currentRow = bestMove.row;
-                currentCol = bestMove.col;
+    if (bestMove.isReversed)
+    {
+        switch (bestMove.direction)
+        {
+        case (RIGHT):
+            currentRow = bestMove.row;
+            currentCol = bestMove.col;
             break;
-            case(LEFT):
-                currentRow = bestMove.row;
-                currentCol = bestMove.col - 1;
+        case (LEFT):
+            currentRow = bestMove.row;
+            currentCol = bestMove.col - 1;
             break;
-            case(UP):
-                currentRow = bestMove.row;
-                currentCol = bestMove.col;
+        case (UP):
+            currentRow = bestMove.row;
+            currentCol = bestMove.col;
             break;
-            case(DOWN):
-                currentRow = bestMove.row;
-                currentCol = bestMove.col;
+        case (DOWN):
+            currentRow = bestMove.row;
+            currentCol = bestMove.col;
             break;
-            default:
-                fprintf(stderr, "Invalid direction\n");
-                free(placements);
-                return NULL;
+        default:
+            fprintf(stderr, "Invalid direction\n");
+            free(placements);
+            return NULL;
         }
     }
-     else{
+    else
+    {
         currentRow = bestMove.row;
         currentCol = bestMove.col;
     }
     int direction = bestMove.direction;
     int letterIndex = 0; // Tracks which letter of usedLetters we're on
 
-    while (letterIndex < (int)strlen(usedLetters)) {
+    while (letterIndex < (int)strlen(usedLetters))
+    {
         // Out-of-bounds check
         if (currentRow < 0 || currentRow >= BOARD_SIZE ||
-            currentCol < 0 || currentCol >= BOARD_SIZE) {
+            currentCol < 0 || currentCol >= BOARD_SIZE)
+        {
             break;
         }
 
         // If this square is empty, place the next letter
-        if (board[currentRow][currentCol].letter == ' ') {
+        if (board[currentRow][currentCol].letter == ' ')
+        {
             board[currentRow][currentCol].letter = usedLetters[letterIndex];
             char temp[128];
             sprintf(temp, "  Row: %d, Col: %d, Char: %c\n",
@@ -152,33 +166,38 @@ char* findTilePlacements(Square board[BOARD_SIZE][BOARD_SIZE], char* usedLetters
         }
 
         // Move to the next square in the specified direction
-        switch (direction) {
-            case UP:
-                currentRow--;
-                break;
-            case DOWN:
-                currentRow++;
-                break;
-            case LEFT:
-                currentCol--;
-                break;
-            case RIGHT:
-                currentCol++;
-                break;
-            default:
-                fprintf(stderr, "Invalid direction\n");
-                free(placements);
-                return NULL;
+        switch (direction)
+        {
+        case UP:
+            currentRow--;
+            break;
+        case DOWN:
+            currentRow++;
+            break;
+        case LEFT:
+            currentCol--;
+            break;
+        case RIGHT:
+            currentCol++;
+            break;
+        default:
+            fprintf(stderr, "Invalid direction\n");
+            free(placements);
+            return NULL;
         }
     }
     return placements;
 }
 
-void findUsedLetters(char *usedLetters, const char *word, char *rack) {
+void findUsedLetters(char *usedLetters, const char *word, char *rack)
+{
     int usedIndex = 0;
-    for (int i = 0; word[i] != '\0'; i++) {
-        for (int j = 0; rack[j] != '\0'; j++) {
-            if (word[i] == rack[j]) {
+    for (int i = 0; word[i] != '\0'; i++)
+    {
+        for (int j = 0; rack[j] != '\0'; j++)
+        {
+            if (word[i] == rack[j])
+            {
                 usedLetters[usedIndex++] = rack[j];
                 rack[j] = ' '; // Mark the letter as used
                 break;

@@ -41,7 +41,7 @@ boardTester: $(BOARD_TESTER_OBJS)
 	$(CC) $(CFLAGS) -o boardTester $(BOARD_TESTER_OBJS)
 
 dictionaryTester: $(DICTIONARY_TESTER_OBJS)
-	$(CC) $(CFLAGS) -o dictionaryTester $(DICTIONARY_TESTER_OBJS)
+	$(CC) $(CFLAGS) -o dictionaryTester $(COMMON_OBJS) $(DICTIONARY_TESTER_OBJS)
 
 trieNodeTester: $(TRIE_NODE_TESTER_OBJS)
 	$(CC) $(CFLAGS) -o trieNodeTester $(TRIE_NODE_TESTER_OBJS)

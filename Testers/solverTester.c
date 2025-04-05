@@ -6,7 +6,7 @@
 /     This file is a comprehensive tester for the Scrabble solver.
 /     It includes functions to test the combination generator and the solver's
 /     move finding logic. It loads a dictionary, sets up test scenarios with
-/     example letters and board configurations, and compares the solver's 
+/     example letters and board configurations, and compares the solver's
 /     output against expected results.
 /
 /---------------------------------------------------------*/
@@ -33,19 +33,18 @@ void checkValidPlacements(Square board[BOARD_SIZE][BOARD_SIZE]);
 
 int main()
 {
-    char testLetters1[] = {"ICKBEAM"}; //Tests 9 letter word generation for QUICKBEAM
-    char testLetters2[] = {"ABSOLU"}; //Tests 9 letter word for ABSOLUTER 
+    char testLetters1[] = {"ICKBEAM"}; // Tests 9 letter word generation for QUICKBEAM
+    char testLetters2[] = {"ABSOLU"};  // Tests 9 letter word for ABSOLUTER
     char testLetters3[] = {"ABCDEFG"}; // Will be used to test empty board
     TrieNode *root = loadDictionary("Testers/dictionary.txt");
 
-    
     testCombinationGenerator(testLetters1);
     testCombinationGenerator(testLetters2);
     testCombinationGenerator(testLetters3);
-    
-    // testSolver(testLetters1, root);
+
+    testSolver(testLetters1, root);
     testSolver(testLetters2, root);
-    // testSolver(testLetters3, root);
+    testSolver(testLetters3, root);
 }
 
 void printCombinations(char *combinations[MAX_TOTAL_COMBINATIONS], int totalCombinations)
@@ -78,7 +77,6 @@ void testCombinationGenerator(char exampleLetters[])
     validateCombinations(exampleLetters, combinations, totalCombinations);
 }
 
-
 void validateCombinations(char exampleLetters[], char *combinations[MAX_TOTAL_COMBINATIONS], int totalCombinations)
 {
     bool error = false;
@@ -94,14 +92,13 @@ void validateCombinations(char exampleLetters[], char *combinations[MAX_TOTAL_CO
     char line[256];
     for (int i = 0; i < totalCombinations; i++)
     {
-        
+
         if (fgets(line, sizeof(line), file) == NULL)
         {
             fprintf(stderr, "Error: Not enough lines in file for combination %s\n", combinations[i]);
             fclose(file);
             return;
         }
-        
 
         // Remove newline character from the line read from the file
         line[strcspn(line, "\n")] = '\0';
@@ -112,11 +109,11 @@ void validateCombinations(char exampleLetters[], char *combinations[MAX_TOTAL_CO
         }
     }
     printf("%s[ %s ]%s Combination test: %s\n",
-        (!error) ? GREEN : RED,
-        (!error) ? "PASSED" : "FAILED",
-        RESET,
-        exampleLetters);
-    
+           (!error) ? GREEN : RED,
+           (!error) ? "PASSED" : "FAILED",
+           RESET,
+           exampleLetters);
+
     fclose(file);
 }
 
@@ -135,7 +132,7 @@ void validateSolver(Move foundMoves[], int totalMovesFound, char exampleLetters[
     char line[256];
     for (int i = 0; i < totalMovesFound; i++)
     {
-        
+
         if (fgets(line, sizeof(line), file) == NULL)
         {
             fprintf(stderr, "Error: Not enough lines in file for combination %s\n", exampleLetters);
@@ -144,7 +141,7 @@ void validateSolver(Move foundMoves[], int totalMovesFound, char exampleLetters[
         }
         char moveString[256];
         snprintf(moveString, sizeof(moveString), "Row: %i, Col: %i, Direction: %i, Word: %s, Score: %i",
-             foundMoves[i].row, foundMoves[i].col, foundMoves[i].direction, foundMoves[i].word, foundMoves[i].score);
+                 foundMoves[i].row, foundMoves[i].col, foundMoves[i].direction, foundMoves[i].word, foundMoves[i].score);
 
         // Remove newline character from the line read from the file
         line[strcspn(line, "\n")] = '\0';
@@ -157,11 +154,11 @@ void validateSolver(Move foundMoves[], int totalMovesFound, char exampleLetters[
         }
     }
     printf("%s[ %s ]%s Valid Move Test: %s\n",
-        (!error) ? GREEN : RED,
-        (!error) ? "PASSED" : "FAILED",
-        RESET,
-        exampleLetters);
-    
+           (!error) ? GREEN : RED,
+           (!error) ? "PASSED" : "FAILED",
+           RESET,
+           exampleLetters);
+
     fclose(file);
 }
 
@@ -169,22 +166,21 @@ void testSolver(char exampleLetters[], TrieNode *root)
 {
     char *combinations[MAX_TOTAL_COMBINATIONS];
     unsigned int totalCombinations = 0;
-    
+
     generateCombinations(exampleLetters, combinations, &totalCombinations);
-    
-    
+
     Move *foundMoves = malloc(100000 * sizeof(Move));
     if (foundMoves == NULL)
     {
         fprintf(stderr, "Memory allocation failed\n");
         exit(1);
     }
-    
+
     int foundCount = 0;
-    
+
     Square board[BOARD_SIZE][BOARD_SIZE];
     initBoard(board);
-    
+
     char filePath[256];
     char lowerExampleLetters[7];
 
@@ -193,11 +189,13 @@ void testSolver(char exampleLetters[], TrieNode *root)
 
     loadBoard(board, filePath);
 
-    
     findMoves(root, foundMoves, &foundCount, board, combinations, totalCombinations);
-    printFoundMoves(foundMoves, foundCount);
-    //validateSolver(foundMoves, foundCount, exampleLetters);
 
+    // Move bestMove = findBestMove(root, board, exampleLetters);
+    // printFoundMoves(foundMoves, foundCount);
+    // printBestMove(bestMove, exampleLetters, board);
+
+    validateSolver(foundMoves, foundCount, exampleLetters);
 
     free(foundMoves);
 }

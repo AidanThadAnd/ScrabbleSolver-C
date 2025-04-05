@@ -1,0 +1,7 @@
+Searching for 'APPLE': FOUND
+Searching for 'MANGO': FOUND
+Searching for 'PEACH': FOUND
+Searching for 'GRAPES': FOUND
+Searching for 'BANANA': FOUND
+Searching for 'GGGGGGG': NOT FOUND
+Memory successfully freed.

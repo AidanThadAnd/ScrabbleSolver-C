@@ -12,130 +12,104 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include "../dataStruct.h"
+#include "../io.h"
 
+#define GREEN "\033[1;32m"
+#define RED "\033[1;31m"
+#define RESET "\033[0m"
 
-typedef struct TrieNode {
-    char letter;             
-    int isWord;              
-    struct TrieNode *children[26]; 
-} TrieNode;
+#define validOutput "./Testers/dictionaryTests/validOutput.txt"
 
-TrieNode *createTrieNode(char letter){
+int compareResultsToValidOutput(const char *results[], int numResults, const char *validOutputFile);
 
-    TrieNode *node = (TrieNode *)malloc(sizeof(TrieNode));
-
-    if (node == NULL) {
-        perror("Failed to allocate memory");
-        exit(1);
-    }
-    node->letter = letter;
-    node->isWord = 0;
-    for (int i = 0; i < 26; i++){
-        node->children[i] = NULL;
-    }
-    return node;
-
-}
-
-void insertWord(TrieNode *root, const char *word){
-
-    TrieNode *current = root;
-
-    int len = strlen(word);
-
-    for (int i = 0; i < len; i++){
-        int index = word[i] - 'A';
-        if (current->children[index] == NULL){
-            current->children[index] = createTrieNode(word[i]);
-        }
-        current = current->children[index];
-    }
-    current->isWord = 1;
-
-}
-
-int searchWord(TrieNode *root, const char *word) {
-
-    TrieNode *current = root;
-
-    while (*word) {  
-        int index = *word - 'A';
-        if (index < 0 || index >= 26 || !current->children[index]) {
-            return 0; 
-        }
-        current = current->children[index];
-        word++;  
-    }
-
-    return current->isWord;
-}
-
-void freeTrie(TrieNode *node){
-
-    if (node == NULL){
-        return;
-    }
-    for (int i = 0; i < 26; i++){
-        freeTrie(node->children[i]);
-    }
-    free(node);
-
-}
-
-TrieNode *loadDictionary(const char *filename){
-
-    FILE *file = fopen(filename, "r");
-    if (file == NULL){
-        perror("Failed to open dictionary file");
-        exit(1);
-    }
-
-    TrieNode *root = createTrieNode('\0');
-    char word[16];
-
-    while ( fscanf(file, "%15s", word) != EOF){
-
-        for(int i = 0; word[i]; i++){
-
-            word[i] = toupper(word[i]);
-
-        }
-
-        insertWord(root, word);
-    }
-
-    fclose(file);
-    return root;
-
-}
-
-void testDictionary(const char *filename) {
-
+int testDictionary(const char *filename) {
     TrieNode *root = loadDictionary(filename);
-    
+
     if (!root) {
         fprintf(stderr, "Failed to load dictionary.\n");
-        return;
+        return 0;
     }
 
     const char *testWords[] = {"APPLE", "MANGO", "PEACH", "GRAPES", "BANANA", "GGGGGGG"};
     int numTests = sizeof(testWords) / sizeof(testWords[0]);
 
-    printf("Dictionary Test Results:\n");
-    for (int i = 0; i < numTests; i++) {
-        printf("Searching for '%s': %s\n", testWords[i], searchWord(root, testWords[i]) ? "FOUND" : "NOT FOUND");
+    const char **results = malloc(numTests * sizeof(char *));
+    if (!results) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        freeTrie(root);
+        return 0;
     }
+    
+    for (int i = 0; i < numTests; i++) {
+        results[i] = malloc(256 * sizeof(char));
+        if (!results[i]) {
+            fprintf(stderr, "Memory allocation failed.\n");
+            for (int j = 0; j < i; j++) {
+                free((void *)results[j]);
+            }
+            free(results);
+            freeTrie(root);
+            return 0;
+        }
+        snprintf((char *)results[i], 256, "Searching for '%s': %s", testWords[i], searchWord(root, testWords[i]) ? "FOUND" : "NOT FOUND");
+    }
+
+    int passed = compareResultsToValidOutput(results, numTests, validOutput);
+
+    for (int i = 0; i < numTests; i++) {
+        free((char *)results[i]);
+    }
+    free(results);
 
     freeTrie(root);
-    printf("Memory successfully freed.\n");
+    return passed;
 }
 
-int main(int argc, char *argv[]) {
-    if (argc < 2) {
-        printf("Usage: %s <dictionary_file>\n", argv[0]);
-        return 1;
+int compareResultsToValidOutput(const char *results[], int numResults, const char *validOutputFile) {
+    FILE *file = fopen(validOutputFile, "r");
+    if (!file) {
+        fprintf(stderr, "Failed to open valid output file: %s\n", validOutputFile);
+        return 0;
     }
 
-    testDictionary(argv[1]);
+    char line[256];
+    int lineIndex = 0;
+    int mismatchFound = 1;
+
+    while (fgets(line, sizeof(line), file) && lineIndex < numResults) {
+        // Remove newline character from the line read from the file
+        line[strcspn(line, "\n")] = 0;
+
+        if (strcmp(line, results[lineIndex]) != 0) {
+            mismatchFound = 0;
+        }
+        lineIndex++;
+    }
+
+    return mismatchFound;
+
+    fclose(file);
+}
+
+int main() {
+
+    char* validDictionary = "Testers/dictionaryTests/validDictionary.txt";
+    char* invalidDictionary = "Testers/dictionaryTests/invalidDictionary.txt";
+
+    int testValid = testDictionary(validDictionary);
+    int testInvalid = testDictionary(invalidDictionary);
+
+    printf("%s[ %s ]%s Valid Dictionary Test\n",
+        (testValid) ? GREEN : RED,
+        (testValid) ? "PASSED" : "FAILED",
+        RESET);
+
+    printf("%s[ %s ]%s Invalid Dictionary Test\n",
+        (testInvalid) ? GREEN : RED,
+        (testInvalid) ? "PASSED" : "FAILED",
+        RESET);
+    printf("All tests completed.\n");
+    
     return 0;
 }
