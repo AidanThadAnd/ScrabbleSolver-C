@@ -89,17 +89,17 @@ static void dfs(TrieNode *head, char *prefix, int *depth, int x, int y, Square b
         return;
     }
 
-    if(*currentCombinationIndex == 0){
-        if(direction == UP && board[y+1][x].validPlacement){
+    if(*depth == 0){
+        if(direction == UP && board[y+1][x].letter != ' '){
             return;
         }
-        if(direction == DOWN && board[y-1][x].validPlacement){
+        if(direction == DOWN && board[y-1][x].letter != ' '){
             return;
         }
-        if(direction == LEFT && board[y][x+1].validPlacement){
+        if(direction == LEFT && board[y][x+1].letter != ' '){
             return;
         }
-        if(direction == RIGHT && board[y][x-1].validPlacement){
+        if(direction == RIGHT && board[y][x-1].letter != ' '){
             return;
         }
     }
@@ -109,7 +109,6 @@ static void dfs(TrieNode *head, char *prefix, int *depth, int x, int y, Square b
     {
         strncat(prefix, &board[y][x].letter, 1);
         (*depth)++;
-
         
 
         switch (direction)
@@ -136,14 +135,18 @@ static void dfs(TrieNode *head, char *prefix, int *depth, int x, int y, Square b
 
     char *reversePrefix = malloc(strlen(prefix) + 1);
     reverseString(prefix, reversePrefix);
-    printf("Prefix: %s\n", reversePrefix);
 
     int reversePrefixIsWord = 0;
     if (direction == UP || direction == LEFT) {
         reversePrefixIsWord = searchWord(head, reversePrefix);
     }
 
-    if ((reversePrefixIsWord || searchWord(head, prefix)) && (*currentCombinationIndex == (int)strlen(combinationToTest))) {
+    int prefixIsWord = 0;
+    if(searchWord(head, prefix) && (direction == DOWN || direction == RIGHT)){
+        prefixIsWord = 1;
+    }
+
+    if ((reversePrefixIsWord || prefixIsWord) && (*currentCombinationIndex == (int)strlen(combinationToTest))) {
         Move newMove;
 
         newMove.direction = direction;
@@ -295,10 +298,6 @@ static void calculateScore(Move *move, Square board[BOARD_SIZE][BOARD_SIZE], int
     {
         totalScore += 50; // Bing for using all 7 letters
     }
-      if (strcmp(move->word, "ABSOLUTE") == 0)
-      {
-          printf("Points for %s: %d, Starting at: (%d,%d), Rack letters used: %d\n", move->word, totalScore, move->row, move->col, rackLettersUsed);
-      }
     move->score = totalScore * wordMultiplier;
 }
 

@@ -107,14 +107,14 @@ char* findTilePlacements(Square board[BOARD_SIZE][BOARD_SIZE], char* usedLetters
         switch(bestMove.direction){
             case(RIGHT):
                 currentRow = bestMove.row;
-                currentCol = bestMove.col + 1;
+                currentCol = bestMove.col;
             break;
             case(LEFT):
                 currentRow = bestMove.row;
                 currentCol = bestMove.col - 1;
             break;
             case(UP):
-                currentRow = bestMove.row + 1;
+                currentRow = bestMove.row;
                 currentCol = bestMove.col;
             break;
             case(DOWN):
