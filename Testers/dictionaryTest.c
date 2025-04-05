@@ -105,7 +105,7 @@ int main() {
         (testValid) ? "PASSED" : "FAILED",
         RESET);
 
-    printf("%s[ %s ]%s Invalid Dictionary Test\n",
+    printf("%s[ %s ]%s Invalid Dictionary Test <- Supposed to fail\n",
         (testInvalid) ? GREEN : RED,
         (testInvalid) ? "PASSED" : "FAILED",
         RESET);
